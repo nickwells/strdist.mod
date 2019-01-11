@@ -33,55 +33,61 @@ func TestJaccard(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		testID := fmt.Sprintf("test %d: %s", i, tc.name)
+		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
 		ngs1, err := strdist.NGrams(tc.s1, 2)
 		if err != nil {
-			t.Errorf("%s : Couldn't construct the ngrams for %s: %s",
-				testID, tc.s1, err)
+			t.Log(tcID)
+			t.Errorf("\t: Couldn't construct the ngrams for %s: %s",
+				tc.s1, err)
 		}
 		ngs2, err := strdist.NGrams(tc.s2, 2)
 		if err != nil {
-			t.Errorf("%s : Couldn't construct the ngrams for %s: %s",
-				testID, tc.s2, err)
+			t.Log(tcID)
+			t.Errorf("\t: Couldn't construct the ngrams for %s: %s", tc.s2, err)
 		}
 		ji := strdist.JaccardIndex(ngs1, ngs2)
 
 		const epsilon = 0.00001
 		if !mathutil.AlmostEqual(ji, tc.expVal, epsilon) {
-			t.Errorf("%s : the returned index should have been"+
+			t.Log(tcID)
+			t.Errorf("\t: the returned index should have been"+
 				" within %f of %9.7f but was %9.7f",
-				testID, epsilon, tc.expVal, ji)
+				epsilon, tc.expVal, ji)
 		}
 
 		ji, err = strdist.JaccardDistance(tc.s1, tc.s2, 2)
 		if err != nil {
-			t.Errorf(
-				"%s : Unexpected error constructing the JaccardDistance: %s",
-				testID, err)
+			t.Log(tcID)
+			t.Errorf("\t: Unexpected error calculating the JaccardDistance: %s",
+				err)
 		}
 		if !mathutil.AlmostEqual(ji, 1.0-tc.expVal, epsilon) {
-			t.Errorf("%s : the returned distance should have been"+
+			t.Log(tcID)
+			t.Errorf("\t: the returned distance should have been"+
 				" within %f of %9.7f but was %9.7f",
-				testID, epsilon, 1.0-tc.expVal, ji)
+				epsilon, 1.0-tc.expVal, ji)
 		}
 
 		wji := strdist.WeightedJaccardIndex(ngs1, ngs2)
 		if !mathutil.AlmostEqual(wji, tc.expWeightedVal, epsilon) {
-			t.Errorf("%s (weighted) : the returned index should have been"+
+			t.Log(tcID + " (weighted)")
+			t.Errorf("\t: the returned index should have been"+
 				" within %f of %9.7f but was %9.7f",
-				testID, epsilon, tc.expWeightedVal, wji)
+				epsilon, tc.expWeightedVal, wji)
 		}
 
 		wji, err = strdist.WeightedJaccardDistance(tc.s1, tc.s2, 2)
 		if err != nil {
-			t.Errorf(
-				"%s : Unexpected error constructing the WeightedJaccardDistance: %s",
-				testID, err)
+			t.Log(tcID + " (weighted)")
+			t.Errorf("\t: Unexpected error calculating the"+
+				" WeightedJaccardDistance: %s",
+				err)
 		}
 		if !mathutil.AlmostEqual(wji, 1.0-tc.expWeightedVal, epsilon) {
-			t.Errorf("%s (weighted) : the returned distance should have been"+
+			t.Log(tcID + " (weighted)")
+			t.Errorf("\t: the returned distance should have been"+
 				" within %f of %9.7f but was %9.7f",
-				testID, epsilon, 1.0-tc.expWeightedVal, wji)
+				epsilon, 1.0-tc.expWeightedVal, wji)
 		}
 	}
 }
@@ -150,7 +156,7 @@ func TestJaccardFinder(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s :\n", i, tc.name)
+		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
 		noChangeFinder, err := strdist.NewJaccardFinder(
 			tc.ngLen, tc.minStrLen, tc.threshold, strdist.NoCaseChange)
 		if err != nil {

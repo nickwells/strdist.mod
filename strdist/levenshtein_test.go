@@ -119,7 +119,7 @@ func TestLevenshteinFinder(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s :\n", i, tc.name)
+		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
 		noChangeLF, err := strdist.NewLevenshteinFinder(
 			tc.minStrLen, tc.threshold, strdist.NoCaseChange)
 		if err != nil {

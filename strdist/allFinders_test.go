@@ -119,16 +119,16 @@ func TestAllFinders(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s :", i, tc.name)
+		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
 		sdslice := tc.finder.FindLike(target, pop...)
 		for _, sd := range sdslice {
 			d := tc.distFunc(target, sd.Str)
 			if d != sd.Dist {
 				t.Log(tcID)
-				t.Errorf("\t:   distance from: %s\n", target)
-				t.Errorf("\t:              to: %s\n", sd.Str)
-				t.Errorf("\t: finder distance: %.5f\n", sd.Dist)
-				t.Errorf("\t: dist func gives: %.5f\n", d)
+				t.Logf("\t:   distance from: %s\n", target)
+				t.Logf("\t:              to: %s\n", sd.Str)
+				t.Logf("\t: finder distance: %.5f\n", sd.Dist)
+				t.Logf("\t: dist func gives: %.5f\n", d)
 				t.Errorf("\t: the calculated distances differ\n")
 			}
 		}

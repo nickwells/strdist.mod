@@ -50,7 +50,7 @@ func TestConvertStrDist(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s :\n", i, tc.name)
+		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
 		strsAll := convertStrDist(tc.dists)
 		strsShort := convertStrDistN(tc.n, tc.dists)
 		if len(strsAll) != tc.expLen {

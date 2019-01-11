@@ -135,7 +135,7 @@ func TestHammingFinder(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s :", i, tc.name)
+		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
 		noChangeFinder, err := strdist.NewHammingFinder(
 			tc.minStrLen, tc.threshold, strdist.NoCaseChange)
 		if err != nil {

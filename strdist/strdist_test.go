@@ -20,7 +20,7 @@ func TestStrDistToString(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s :\n", i, tc.name)
+		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
 		s := tc.dist.String()
 		if s != tc.expStr {
 			t.Log(tcID)
@@ -54,7 +54,7 @@ func TestStrDistCmp(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s :\n", i, tc.name)
+		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
 		val := strdist.SDSlice(dists).Cmp(tc.i, tc.j)
 		if val != tc.expVal {
 			t.Log(tcID)

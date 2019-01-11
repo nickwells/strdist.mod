@@ -78,7 +78,7 @@ func TestNewNGramsFinder(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s :\n", i, tc.name)
+		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
 		f, err := strdist.NewCosineFinder(
 			tc.ngLen, tc.minStrLen, tc.threshold, tc.caseMod)
 		if err == nil {
@@ -211,7 +211,7 @@ func TestCosine(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s :\n", i, tc.name)
+		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
 		dist, err := strdist.CosineDistance(tc.s1, tc.s2, tc.ngLen)
 
 		if err == nil {
@@ -303,12 +303,12 @@ func TestCosineFinder(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s :\n", i, tc.name)
+		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
 		noChangeFinder, err := strdist.NewCosineFinder(
 			tc.ngLen, tc.minStrLen, tc.threshold, strdist.NoCaseChange)
 		if err != nil {
 			t.Log(tcID)
-			t.Errorf("Couldn't create the NoCaseChange CosineFinder: %s",
+			t.Errorf("\t: Couldn't create the NoCaseChange CosineFinder: %s",
 				err)
 			continue
 		}
@@ -316,7 +316,7 @@ func TestCosineFinder(t *testing.T) {
 			tc.ngLen, tc.minStrLen, tc.threshold, strdist.ForceToLower)
 		if err != nil {
 			t.Log(tcID)
-			t.Errorf("Couldn't create the ForceToLower CosineFinder: %s",
+			t.Errorf("\t: Couldn't create the ForceToLower CosineFinder: %s",
 				err)
 			continue
 		}

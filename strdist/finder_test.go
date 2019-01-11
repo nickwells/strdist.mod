@@ -55,7 +55,7 @@ func TestCommonFinder(t *testing.T) {
 	var a TestAlgo
 
 	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s :\n", i, tc.name)
+		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
 		cfi, err := strdist.NewFinder(
 			tc.minStrLen, tc.threshold, tc.caseMod, a)
 		if err == nil {
