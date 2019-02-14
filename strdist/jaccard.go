@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+// DfltJaccardThreshold is the threshold for similarity that the pre-built
+// Jaccard Finders will use
 const DfltJaccardThreshold = 0.33
 
 // DfltJaccardFinder is a Finder with some default values suitable

@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+// DfltCosineThreshold is the threshold for similarity that the pre-built
+// Cosine Finders will use
 const DfltCosineThreshold = 0.33
 
 // DfltCosineFinder is a Finder with some default values suitable

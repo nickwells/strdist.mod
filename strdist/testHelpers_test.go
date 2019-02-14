@@ -7,7 +7,7 @@ import (
 	"github.com/nickwells/testhelper.mod/testhelper"
 )
 
-// finderChecker is a test Helper function that calls the finder funtion and
+// finderChecker is a test Helper function that calls the finder function and
 // checks the results
 func finderChecker(t *testing.T, tID, subID, target string, pop []string, f *strdist.Finder, expect []string) {
 	t.Helper()
@@ -23,7 +23,7 @@ func finderChecker(t *testing.T, tID, subID, target string, pop []string, f *str
 }
 
 // finderCheckerMaxN is a test Helper function that calls the limited results
-// finder funtion and checks the results
+// finder function and checks the results
 func finderCheckerMaxN(t *testing.T, tID, subID, target string, pop []string, n int, f *strdist.Finder, expect []string) {
 	t.Helper()
 	results := f.FindNStrLike(n, target, pop...)

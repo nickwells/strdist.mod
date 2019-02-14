@@ -6,7 +6,7 @@ import (
 )
 
 // NGramSet represents a set of n-grams. Each n-gram has an associated weight
-// which is the number of occurences in the original string from which it is
+// which is the number of occurrences in the original string from which it is
 // derived
 type NGramSet map[string]int
 
