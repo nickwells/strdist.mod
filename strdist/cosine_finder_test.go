@@ -2,7 +2,6 @@ package strdist_test
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/nickwells/mathutil.mod/mathutil"
@@ -81,60 +80,38 @@ func TestNewNGramsFinder(t *testing.T) {
 		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
 		f, err := strdist.NewCosineFinder(
 			tc.ngLen, tc.minStrLen, tc.threshold, tc.caseMod)
-		if err == nil {
-			if tc.errExpected {
+		if !testhelper.CheckError(t, tcID, err,
+			tc.errExpected, tc.errContains) &&
+			err == nil {
+			if f == nil {
 				t.Log(tcID)
-				t.Errorf("\t: an error was expected but none was found\n")
+				t.Errorf("\t: a nil pointer was returned but no error\n")
 			} else {
-				if f == nil {
+				ca, ok := f.Algo.(*strdist.CosineAlgo)
+				if !ok {
 					t.Log(tcID)
-					t.Errorf("\t: a nil pointer was returned but no error\n")
+					t.Errorf("\t: the Algo should be a *CosineAlgo\n")
 				} else {
-					ca, ok := f.Algo.(*strdist.CosineAlgo)
-					if !ok {
+					if ca.N != tc.ngLen {
 						t.Log(tcID)
-						t.Errorf("\t: the Algo should be a *CosineAlgo\n")
-					} else {
-						if ca.N != tc.ngLen {
-							t.Log(tcID)
-							t.Errorf("\t: N-Gram Len should be: %d, was: %d\n",
-								tc.ngLen, ca.N)
-						}
-					}
-					if f.MinStrLen != tc.minStrLen {
-						t.Log(tcID)
-						t.Errorf("\t: minStrLen should be: %d, was: %d\n",
-							tc.minStrLen, f.MinStrLen)
-					}
-					if f.T != tc.threshold {
-						t.Log(tcID)
-						t.Errorf("\t: threshold should be: %f, was: %f\n",
-							tc.threshold, f.T)
-					}
-					if f.CM != tc.caseMod {
-						t.Log(tcID)
-						t.Errorf("\t: caseMod should be: %d, was: %d\n",
-							tc.caseMod, f.CM)
+						t.Errorf("\t: N-Gram Len should be: %d, was: %d\n",
+							tc.ngLen, ca.N)
 					}
 				}
-			}
-		} else {
-			if !tc.errExpected {
-				t.Log(tcID)
-				t.Errorf("\t: an unexpected error was seen: %s\n", err)
-			} else {
-				var problemReported bool
-				for _, errPart := range tc.errContains {
-					if !strings.Contains(err.Error(), errPart) {
-						if !problemReported {
-							t.Log(tcID)
-							t.Errorf(
-								"\t: an unexpected error value was seen: %s\n",
-								err)
-						}
-						t.Logf("\t: the error should contain : %s\n", errPart)
-						problemReported = true
-					}
+				if f.MinStrLen != tc.minStrLen {
+					t.Log(tcID)
+					t.Errorf("\t: minStrLen should be: %d, was: %d\n",
+						tc.minStrLen, f.MinStrLen)
+				}
+				if f.T != tc.threshold {
+					t.Log(tcID)
+					t.Errorf("\t: threshold should be: %f, was: %f\n",
+						tc.threshold, f.T)
+				}
+				if f.CM != tc.caseMod {
+					t.Log(tcID)
+					t.Errorf("\t: caseMod should be: %d, was: %d\n",
+						tc.caseMod, f.CM)
 				}
 			}
 		}

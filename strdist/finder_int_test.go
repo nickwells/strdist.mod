@@ -12,7 +12,7 @@ func TestConvertStrDist(t *testing.T) {
 		n               int
 		expLen          int
 		expShortLen     int
-		expFirstVal     string
+		expFirstVal     string // first val is the same for long or short
 		expLastVal      string
 		expLastShortVal string
 	}{
@@ -53,33 +53,23 @@ func TestConvertStrDist(t *testing.T) {
 		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
 		strsAll := convertStrDist(tc.dists)
 		strsShort := convertStrDistN(tc.n, tc.dists)
-		if len(strsAll) != tc.expLen {
-			t.Log(tcID)
-			t.Errorf("\t: bad conversion (all): len should be: %d, was: %d\n",
-				tc.expLen, len(strsAll))
+		checkLen(t, tcID, "all", len(strsAll), tc.expLen)
+		checkLen(t, tcID, "short", len(strsShort), tc.expShortLen)
+		if len(strsAll) > 0 {
+			checkVal(t, tcID, "all", "first", strsAll[0], tc.expFirstVal)
+			checkVal(t, tcID, "all", "last",
+				strsAll[len(strsAll)-1], tc.expLastVal)
 		}
-		if len(strsShort) != tc.expShortLen {
-			t.Log(tcID)
-			t.Errorf("\t: bad conversion (short): len should be: %d, was: %d\n",
-				tc.expShortLen, len(strsShort))
-		}
-		if len(strsAll) > 0 &&
-			strsAll[0] != tc.expFirstVal {
-			t.Log(tcID)
-			t.Errorf("\t: bad first val (all): should be: '%s', was: '%s'\n",
-				tc.expFirstVal, strsAll[0])
+		if len(strsShort) > 0 {
+			checkVal(t, tcID, "short", "first", strsShort[0], tc.expFirstVal)
+			checkVal(t, tcID, "short", "last",
+				strsShort[len(strsShort)-1], tc.expLastShortVal)
 		}
 		if len(strsShort) > 0 &&
 			strsShort[0] != tc.expFirstVal {
 			t.Log(tcID)
 			t.Errorf("\t: bad first val (short): should be: '%s', was: '%s'\n",
 				tc.expFirstVal, strsShort[0])
-		}
-		if len(strsAll) > 0 &&
-			strsAll[len(strsAll)-1] != tc.expLastVal {
-			t.Log(tcID)
-			t.Errorf("\t: bad last val (all): should be: '%s', was: '%s'\n",
-				tc.expLastVal, strsAll[len(strsAll)-1])
 		}
 		if len(strsShort) > 0 &&
 			strsShort[len(strsShort)-1] != tc.expLastShortVal {
@@ -88,5 +78,24 @@ func TestConvertStrDist(t *testing.T) {
 				tc.expLastShortVal, strsShort[len(strsShort)-1])
 		}
 	}
+}
 
+// checkLen reports lengths that differ from expectation
+func checkLen(t *testing.T, tcID, name string, l, expLen int) {
+	t.Helper()
+	if l != expLen {
+		t.Log(tcID)
+		t.Errorf("\t: bad conversion (%s): len should be: %d, was: %d\n",
+			name, expLen, l)
+	}
+}
+
+// checkVal reports values that differ from expectation
+func checkVal(t *testing.T, tcID, name, vName string, val, expVal string) {
+	t.Helper()
+	if val != expVal {
+		t.Log(tcID)
+		t.Errorf("\t: bad %s val (%s): should be: '%s', was: '%s'\n",
+			vName, name, expVal, val)
+	}
 }

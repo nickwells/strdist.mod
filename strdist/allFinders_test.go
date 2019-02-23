@@ -7,6 +7,55 @@ import (
 	"github.com/nickwells/strdist.mod/strdist"
 )
 
+// finders holds all the finders
+type finders struct {
+	cosineFinder          *strdist.Finder
+	jaccardFinder         *strdist.Finder
+	weightedJaccardFinder *strdist.Finder
+	levenshteinFinder     *strdist.Finder
+	scaledLevFinder       *strdist.Finder
+	hammingFinder         *strdist.Finder
+}
+
+// makeFinders returns a finders struct
+func makeFinders(t *testing.T) finders {
+	t.Helper()
+
+	f := finders{}
+	ff, err := strdist.NewCosineFinder(2, 0, 1.0, strdist.NoCaseChange)
+	if err != nil {
+		t.Fatal("couldn't create the Cosine Finder: ", err)
+	}
+	f.cosineFinder = ff
+	ff, err = strdist.NewJaccardFinder(2, 0, 1.0, strdist.NoCaseChange)
+	if err != nil {
+		t.Fatal("couldn't create the Jaccard Finder: ", err)
+	}
+	f.jaccardFinder = ff
+	ff, err = strdist.NewWeightedJaccardFinder(2, 0, 1.0, strdist.NoCaseChange)
+	if err != nil {
+		t.Fatal("couldn't create the WeightedJaccard Finder: ", err)
+	}
+	f.weightedJaccardFinder = ff
+	ff, err = strdist.NewLevenshteinFinder(0, 1.0, strdist.NoCaseChange)
+	if err != nil {
+		t.Fatal("couldn't create the Levenshtein Finder: ", err)
+	}
+	f.levenshteinFinder = ff
+	ff, err = strdist.NewScaledLevFinder(0, 1.0, strdist.NoCaseChange)
+	if err != nil {
+		t.Fatal("couldn't create the ScaledLev Finder: ", err)
+	}
+	f.scaledLevFinder = ff
+	ff, err = strdist.NewHammingFinder(0, 1.0, strdist.NoCaseChange)
+	if err != nil {
+		t.Fatal("couldn't create the ScaledLev Finder: ", err)
+	}
+	f.hammingFinder = ff
+
+	return f
+}
+
 func TestAllFinders(t *testing.T) {
 	target := "test"
 	pop := []string{
@@ -23,36 +72,7 @@ func TestAllFinders(t *testing.T) {
 		"test XXX",
 	}
 
-	cosineFinder, err :=
-		strdist.NewCosineFinder(2, 0, 1.0, strdist.NoCaseChange)
-	if err != nil {
-		t.Fatal("couldn't create the Cosine Finder: ", err)
-	}
-	jaccardFinder, err :=
-		strdist.NewJaccardFinder(2, 0, 1.0, strdist.NoCaseChange)
-	if err != nil {
-		t.Fatal("couldn't create the Jaccard Finder: ", err)
-	}
-	weightedJaccardFinder, err :=
-		strdist.NewWeightedJaccardFinder(2, 0, 1.0, strdist.NoCaseChange)
-	if err != nil {
-		t.Fatal("couldn't create the WeightedJaccard Finder: ", err)
-	}
-	levenshteinFinder, err :=
-		strdist.NewLevenshteinFinder(0, 1.0, strdist.NoCaseChange)
-	if err != nil {
-		t.Fatal("couldn't create the Levenshtein Finder: ", err)
-	}
-	scaledLevFinder, err :=
-		strdist.NewScaledLevFinder(0, 1.0, strdist.NoCaseChange)
-	if err != nil {
-		t.Fatal("couldn't create the ScaledLev Finder: ", err)
-	}
-	hammingFinder, err :=
-		strdist.NewHammingFinder(0, 1.0, strdist.NoCaseChange)
-	if err != nil {
-		t.Fatal("couldn't create the ScaledLev Finder: ", err)
-	}
+	f := makeFinders(t)
 
 	testCases := []struct {
 		name     string
@@ -61,7 +81,7 @@ func TestAllFinders(t *testing.T) {
 	}{
 		{
 			name:   "cosine",
-			finder: cosineFinder,
+			finder: f.cosineFinder,
 			distFunc: func(s1, s2 string) float64 {
 				d, err := strdist.CosineDistance(s1, s2, 2)
 				if err != nil {
@@ -73,7 +93,7 @@ func TestAllFinders(t *testing.T) {
 		},
 		{
 			name:   "jaccard",
-			finder: jaccardFinder,
+			finder: f.jaccardFinder,
 			distFunc: func(s1, s2 string) float64 {
 				d, err := strdist.JaccardDistance(s1, s2, 2)
 				if err != nil {
@@ -85,7 +105,7 @@ func TestAllFinders(t *testing.T) {
 		},
 		{
 			name:   "weightedJaccard",
-			finder: weightedJaccardFinder,
+			finder: f.weightedJaccardFinder,
 			distFunc: func(s1, s2 string) float64 {
 				d, err := strdist.WeightedJaccardDistance(s1, s2, 2)
 				if err != nil {
@@ -97,23 +117,23 @@ func TestAllFinders(t *testing.T) {
 		},
 		{
 			name:   "levenshtein",
-			finder: levenshteinFinder,
+			finder: f.levenshteinFinder,
 			distFunc: func(s1, s2 string) float64 {
 				return float64(strdist.LevenshteinDistance(s1, s2))
 			},
 		},
 		{
 			name:   "scaledLev",
-			finder: scaledLevFinder,
+			finder: f.scaledLevFinder,
 			distFunc: func(s1, s2 string) float64 {
-				return float64(strdist.ScaledLevDistance(s1, s2))
+				return strdist.ScaledLevDistance(s1, s2)
 			},
 		},
 		{
 			name:   "hamming",
-			finder: hammingFinder,
+			finder: f.hammingFinder,
 			distFunc: func(s1, s2 string) float64 {
-				return float64(strdist.HammingDistance(s1, s2))
+				return strdist.HammingDistance(s1, s2)
 			},
 		},
 	}
