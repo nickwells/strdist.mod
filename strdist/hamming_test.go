@@ -1,10 +1,10 @@
 package strdist_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/nickwells/strdist.mod/strdist"
+	"github.com/nickwells/testhelper.mod/testhelper"
 )
 
 // TestHamming ...
@@ -78,7 +78,7 @@ func TestHamming(t *testing.T) {
 
 func TestHammingFinder(t *testing.T) {
 	testCases := []struct {
-		name                string
+		testhelper.ID
 		minStrLen           int
 		threshold           float64
 		maxResults          int
@@ -89,7 +89,7 @@ func TestHammingFinder(t *testing.T) {
 		expNStringsFlatCase []string
 	}{
 		{
-			name:                "std",
+			ID:                  testhelper.MkID("std"),
 			minStrLen:           4,
 			threshold:           2.0,
 			maxResults:          0,
@@ -100,7 +100,7 @@ func TestHammingFinder(t *testing.T) {
 			expNStringsFlatCase: []string{},
 		},
 		{
-			name:                "short target",
+			ID:                  testhelper.MkID("short target"),
 			minStrLen:           6,
 			threshold:           2.0,
 			maxResults:          99,
@@ -111,7 +111,7 @@ func TestHammingFinder(t *testing.T) {
 			expNStringsFlatCase: []string{},
 		},
 		{
-			name:                "short population entry",
+			ID:                  testhelper.MkID("short population entry"),
 			minStrLen:           4,
 			threshold:           2.0,
 			maxResults:          1,
@@ -122,7 +122,7 @@ func TestHammingFinder(t *testing.T) {
 			expNStringsFlatCase: []string{"HELLO"},
 		},
 		{
-			name:                "empty target",
+			ID:                  testhelper.MkID("empty target"),
 			minStrLen:           0,
 			threshold:           2.0,
 			maxResults:          1,
@@ -134,12 +134,11 @@ func TestHammingFinder(t *testing.T) {
 		},
 	}
 
-	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
+	for _, tc := range testCases {
 		noChangeFinder, err := strdist.NewHammingFinder(
 			tc.minStrLen, tc.threshold, strdist.NoCaseChange)
 		if err != nil {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Errorf("Couldn't create the NoCaseChange HammingFinder: %s",
 				err)
 			continue
@@ -147,16 +146,16 @@ func TestHammingFinder(t *testing.T) {
 		flatCaseFinder, err := strdist.NewHammingFinder(
 			tc.minStrLen, tc.threshold, strdist.ForceToLower)
 		if err != nil {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Errorf("Couldn't create the ForceToLower HammingFinder: %s",
 				err)
 			continue
 		}
-		finderChecker(t, tcID, "no case change",
+		finderChecker(t, tc.IDStr(), "no case change",
 			tc.target, tc.pop, noChangeFinder, tc.expStringsNoChange)
-		finderChecker(t, tcID, "flattened case",
+		finderChecker(t, tc.IDStr(), "flattened case",
 			tc.target, tc.pop, flatCaseFinder, tc.expStringsFlatCase)
-		finderCheckerMaxN(t, tcID, "flattened case",
+		finderCheckerMaxN(t, tc.IDStr(), "flattened case",
 			tc.target, tc.pop, tc.maxResults,
 			flatCaseFinder, tc.expNStringsFlatCase)
 	}

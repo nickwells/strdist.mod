@@ -5,25 +5,25 @@ import (
 	"testing"
 
 	"github.com/nickwells/strdist.mod/strdist"
+	"github.com/nickwells/testhelper.mod/testhelper"
 )
 
 func TestStrDistToString(t *testing.T) {
 	testCases := []struct {
-		name   string
+		testhelper.ID
 		dist   strdist.StrDist
 		expStr string
 	}{
 		{
-			name:   "dflt",
+			ID:     testhelper.MkID("dflt"),
 			expStr: "Str: '', Dist: 0.00000",
 		},
 	}
 
-	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
+	for _, tc := range testCases {
 		s := tc.dist.String()
 		if s != tc.expStr {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Logf("\t:      got: %s\n", s)
 			t.Logf("\t: expected: %s\n", tc.expStr)
 			t.Errorf("\t: bad string conversion\n")

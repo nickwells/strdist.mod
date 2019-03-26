@@ -1,10 +1,10 @@
 package strdist_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/nickwells/strdist.mod/strdist"
+	"github.com/nickwells/testhelper.mod/testhelper"
 )
 
 // finders holds all the finders
@@ -75,12 +75,12 @@ func TestAllFinders(t *testing.T) {
 	f := makeFinders(t)
 
 	testCases := []struct {
-		name     string
+		testhelper.ID
 		finder   *strdist.Finder
 		distFunc func(string, string) float64
 	}{
 		{
-			name:   "cosine",
+			ID:     testhelper.MkID("cosine"),
 			finder: f.cosineFinder,
 			distFunc: func(s1, s2 string) float64 {
 				d, err := strdist.CosineDistance(s1, s2, 2)
@@ -92,7 +92,7 @@ func TestAllFinders(t *testing.T) {
 			},
 		},
 		{
-			name:   "jaccard",
+			ID:     testhelper.MkID("jaccard"),
 			finder: f.jaccardFinder,
 			distFunc: func(s1, s2 string) float64 {
 				d, err := strdist.JaccardDistance(s1, s2, 2)
@@ -104,7 +104,7 @@ func TestAllFinders(t *testing.T) {
 			},
 		},
 		{
-			name:   "weightedJaccard",
+			ID:     testhelper.MkID("weightedJaccard"),
 			finder: f.weightedJaccardFinder,
 			distFunc: func(s1, s2 string) float64 {
 				d, err := strdist.WeightedJaccardDistance(s1, s2, 2)
@@ -116,21 +116,21 @@ func TestAllFinders(t *testing.T) {
 			},
 		},
 		{
-			name:   "levenshtein",
+			ID:     testhelper.MkID("levenshtein"),
 			finder: f.levenshteinFinder,
 			distFunc: func(s1, s2 string) float64 {
 				return float64(strdist.LevenshteinDistance(s1, s2))
 			},
 		},
 		{
-			name:   "scaledLev",
+			ID:     testhelper.MkID("scaledLev"),
 			finder: f.scaledLevFinder,
 			distFunc: func(s1, s2 string) float64 {
 				return strdist.ScaledLevDistance(s1, s2)
 			},
 		},
 		{
-			name:   "hamming",
+			ID:     testhelper.MkID("hamming"),
 			finder: f.hammingFinder,
 			distFunc: func(s1, s2 string) float64 {
 				return strdist.HammingDistance(s1, s2)
@@ -138,13 +138,12 @@ func TestAllFinders(t *testing.T) {
 		},
 	}
 
-	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
+	for _, tc := range testCases {
 		sdslice := tc.finder.FindLike(target, pop...)
 		for _, sd := range sdslice {
 			d := tc.distFunc(target, sd.Str)
 			if d != sd.Dist {
-				t.Log(tcID)
+				t.Log(tc.IDStr())
 				t.Logf("\t:   distance from: %s\n", target)
 				t.Logf("\t:              to: %s\n", sd.Str)
 				t.Logf("\t: finder distance: %.5f\n", sd.Dist)

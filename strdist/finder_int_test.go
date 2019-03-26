@@ -1,13 +1,14 @@
 package strdist
 
 import (
-	"fmt"
 	"testing"
+
+	"github.com/nickwells/testhelper.mod/testhelper"
 )
 
 func TestConvertStrDist(t *testing.T) {
 	testCases := []struct {
-		name            string
+		testhelper.ID
 		dists           []StrDist
 		n               int
 		expLen          int
@@ -17,7 +18,7 @@ func TestConvertStrDist(t *testing.T) {
 		expLastShortVal string
 	}{
 		{
-			name: "long dist slice",
+			ID: testhelper.MkID("long dist slice"),
 			dists: []StrDist{
 				{Str: "str0", Dist: 1.2},
 				{Str: "str1", Dist: 1.2},
@@ -35,7 +36,7 @@ func TestConvertStrDist(t *testing.T) {
 			expLastShortVal: "str2",
 		},
 		{
-			name: "short dist slice",
+			ID: testhelper.MkID("short dist slice"),
 			dists: []StrDist{
 				{Str: "str0", Dist: 1.2},
 				{Str: "str1", Dist: 1.2},
@@ -49,31 +50,30 @@ func TestConvertStrDist(t *testing.T) {
 		},
 	}
 
-	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
+	for _, tc := range testCases {
 		strsAll := convertStrDist(tc.dists)
 		strsShort := convertStrDistN(tc.n, tc.dists)
-		checkLen(t, tcID, "all", len(strsAll), tc.expLen)
-		checkLen(t, tcID, "short", len(strsShort), tc.expShortLen)
+		checkLen(t, tc.IDStr(), "all", len(strsAll), tc.expLen)
+		checkLen(t, tc.IDStr(), "short", len(strsShort), tc.expShortLen)
 		if len(strsAll) > 0 {
-			checkVal(t, tcID, "all", "first", strsAll[0], tc.expFirstVal)
-			checkVal(t, tcID, "all", "last",
+			checkVal(t, tc.IDStr(), "all", "first", strsAll[0], tc.expFirstVal)
+			checkVal(t, tc.IDStr(), "all", "last",
 				strsAll[len(strsAll)-1], tc.expLastVal)
 		}
 		if len(strsShort) > 0 {
-			checkVal(t, tcID, "short", "first", strsShort[0], tc.expFirstVal)
-			checkVal(t, tcID, "short", "last",
+			checkVal(t, tc.IDStr(), "short", "first", strsShort[0], tc.expFirstVal)
+			checkVal(t, tc.IDStr(), "short", "last",
 				strsShort[len(strsShort)-1], tc.expLastShortVal)
 		}
 		if len(strsShort) > 0 &&
 			strsShort[0] != tc.expFirstVal {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Errorf("\t: bad first val (short): should be: '%s', was: '%s'\n",
 				tc.expFirstVal, strsShort[0])
 		}
 		if len(strsShort) > 0 &&
 			strsShort[len(strsShort)-1] != tc.expLastShortVal {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Errorf("\t: bad last val (short): should be: '%s', was: '%s'\n",
 				tc.expLastShortVal, strsShort[len(strsShort)-1])
 		}

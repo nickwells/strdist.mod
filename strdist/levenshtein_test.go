@@ -1,7 +1,6 @@
 package strdist_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/nickwells/strdist.mod/strdist"
@@ -11,49 +10,49 @@ import (
 // TestLevenshtein ...
 func TestLevenshtein(t *testing.T) {
 	testCases := []struct {
-		name    string
+		testhelper.ID
 		a, b    string
 		expDist int
 	}{
 		{
-			name:    "zero char same",
+			ID:      testhelper.MkID("zero char same"),
 			a:       "",
 			b:       "",
 			expDist: 0,
 		},
 		{
-			name:    "single char same",
+			ID:      testhelper.MkID("single char same"),
 			a:       "a",
 			b:       "a",
 			expDist: 0,
 		},
 		{
-			name:    "single char differ",
+			ID:      testhelper.MkID("single char differ"),
 			a:       "a",
 			b:       "b",
 			expDist: 1,
 		},
 		{
-			name:    "differ 2",
+			ID:      testhelper.MkID("differ 2"),
 			a:       "aa",
 			b:       "ab",
 			expDist: 1,
 		},
 		{
-			name:    "Kitten/Sitting",
+			ID:      testhelper.MkID("Kitten/Sitting"),
 			a:       "Kitten",
 			b:       "Sitting",
 			expDist: 3,
 		},
 		{
-			name:    "Saturday/Sunday",
+			ID:      testhelper.MkID("Saturday/Sunday"),
 			a:       "Saturday",
 			b:       "Sunday",
 			expDist: 3,
 		},
 	}
 
-	for i, tc := range testCases {
+	for _, tc := range testCases {
 		for _, order := range []string{"a,b", "b,a"} {
 			a, b := tc.a, tc.b
 			if order == "b,a" {
@@ -61,10 +60,9 @@ func TestLevenshtein(t *testing.T) {
 			}
 			dist := strdist.LevenshteinDistance(a, b)
 			if dist != tc.expDist {
-				t.Logf("test %d: %s :\n", i, tc.name)
-				t.Errorf(
-					"\t: LevenshteinDistance('%s', '%s')"+
-						" expected distance: %d got: %d",
+				t.Logf(tc.IDStr())
+				t.Errorf("\t: LevenshteinDistance('%s', '%s')"+
+					" expected distance: %d got: %d",
 					a, b, tc.expDist, dist)
 			}
 		}
@@ -73,7 +71,7 @@ func TestLevenshtein(t *testing.T) {
 
 func TestLevenshteinFinder(t *testing.T) {
 	testCases := []struct {
-		name                string
+		testhelper.ID
 		minStrLen           int
 		threshold           float64
 		maxResults          int
@@ -84,7 +82,7 @@ func TestLevenshteinFinder(t *testing.T) {
 		expNStringsFlatCase []string
 	}{
 		{
-			name:                "std",
+			ID:                  testhelper.MkID("std"),
 			minStrLen:           4,
 			threshold:           2,
 			maxResults:          0,
@@ -95,7 +93,7 @@ func TestLevenshteinFinder(t *testing.T) {
 			expNStringsFlatCase: []string{},
 		},
 		{
-			name:                "short target",
+			ID:                  testhelper.MkID("short target"),
 			minStrLen:           6,
 			threshold:           2,
 			maxResults:          99,
@@ -106,7 +104,7 @@ func TestLevenshteinFinder(t *testing.T) {
 			expNStringsFlatCase: []string{},
 		},
 		{
-			name:                "short population entry",
+			ID:                  testhelper.MkID("short population entry"),
 			minStrLen:           4,
 			threshold:           2,
 			maxResults:          1,
@@ -118,12 +116,11 @@ func TestLevenshteinFinder(t *testing.T) {
 		},
 	}
 
-	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
+	for _, tc := range testCases {
 		noChangeLF, err := strdist.NewLevenshteinFinder(
 			tc.minStrLen, tc.threshold, strdist.NoCaseChange)
 		if err != nil {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Errorf("Couldn't create the NoCaseChange LevenshteinFinder: %s",
 				err)
 			continue
@@ -131,7 +128,7 @@ func TestLevenshteinFinder(t *testing.T) {
 		flatCaseLF, err := strdist.NewLevenshteinFinder(
 			tc.minStrLen, tc.threshold, strdist.ForceToLower)
 		if err != nil {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Errorf("Couldn't create the ForceToLower LevenshteinFinder: %s",
 				err)
 			continue
@@ -143,19 +140,19 @@ func TestLevenshteinFinder(t *testing.T) {
 			tc.maxResults, tc.target, tc.pop...)
 
 		if testhelper.StringSliceDiff(noChangeSlice, tc.expStringsNoChange) {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Logf("\t: expected: %v", tc.expStringsNoChange)
 			t.Logf("\t:      got: %v", noChangeSlice)
 			t.Errorf("\t: results are unexpected - no case change\n")
 		}
 		if testhelper.StringSliceDiff(flatCaseSlice, tc.expStringsFlatCase) {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Logf("\t: expected: %v", tc.expStringsFlatCase)
 			t.Logf("\t:      got: %v", flatCaseSlice)
 			t.Errorf("\t: results are unexpected - flattened case\n")
 		}
 		if testhelper.StringSliceDiff(flatCaseSliceShort, tc.expNStringsFlatCase) {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Logf("\t: expected: %v", tc.expNStringsFlatCase)
 			t.Logf("\t:      got: %v", flatCaseSliceShort)
 			t.Errorf(

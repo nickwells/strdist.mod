@@ -6,44 +6,45 @@ import (
 
 	"github.com/nickwells/mathutil.mod/mathutil"
 	"github.com/nickwells/strdist.mod/strdist"
+	"github.com/nickwells/testhelper.mod/testhelper"
 )
 
 // TestNGrams tests the NGrams function
 func TestNGrams(t *testing.T) {
 	testCases := []struct {
-		name              string
+		testhelper.ID
 		s                 string
 		n                 int
 		expDistinctNGrams int
 		expErr            bool
 	}{
 		{
-			name:              "some Repeats",
+			ID:                testhelper.MkID("some Repeats"),
 			s:                 "helloello",
 			n:                 3,
 			expDistinctNGrams: 5,
 		},
 		{
-			name:              "short string",
+			ID:                testhelper.MkID("short string"),
 			s:                 "hell",
 			n:                 4,
 			expDistinctNGrams: 1,
 		},
 		{
-			name:              "too short string",
+			ID:                testhelper.MkID("too short string"),
 			s:                 "hel",
 			n:                 4,
 			expDistinctNGrams: 0,
 		},
 		{
-			name:              "bad n - zero",
+			ID:                testhelper.MkID("bad n - zero"),
 			s:                 "hel",
 			n:                 0,
 			expDistinctNGrams: 0,
 			expErr:            true,
 		},
 		{
-			name:              "bad n - negative",
+			ID:                testhelper.MkID("bad n - negative"),
 			s:                 "hel",
 			n:                 -1,
 			expDistinctNGrams: 0,
@@ -51,25 +52,24 @@ func TestNGrams(t *testing.T) {
 		},
 	}
 
-	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
+	for _, tc := range testCases {
 		m, err := strdist.NGrams(tc.s, tc.n)
 
 		if tc.expErr {
 			if err == nil {
-				t.Log(tcID)
+				t.Log(tc.IDStr())
 				t.Logf("\t: NGrams('%s', %d): ", tc.s, tc.n)
 				t.Error("\t: should return an error but didn't")
 			}
 			continue
 		} else if err != nil {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Logf("\t: NGrams('%s', %d): ", tc.s, tc.n)
 			t.Errorf("\t: shouldn't return an error but did: %s", err)
 		}
 
 		if len(m) != tc.expDistinctNGrams {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Logf("\t: NGrams('%s', %d): ", tc.s, tc.n)
 			t.Errorf("\t: should return %d n-grams but returned %d",
 				tc.expDistinctNGrams, len(m))
@@ -78,7 +78,7 @@ func TestNGrams(t *testing.T) {
 		totNGrams := 0
 		for k, v := range m {
 			if len(k) != tc.n {
-				t.Log(tcID)
+				t.Log(tc.IDStr())
 				t.Logf("\t: NGrams('%s', %d): ", tc.s, tc.n)
 				t.Errorf("\t: some n-grams are not of length %d eg: '%s'",
 					tc.n, k)
@@ -92,7 +92,7 @@ func TestNGrams(t *testing.T) {
 			expTotNGrams = 0
 		}
 		if totNGrams != expTotNGrams {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Logf("\t: NGrams('%s', %d): ", tc.s, tc.n)
 			t.Errorf("\t: the string should contain %d n-grams not %d",
 				expTotNGrams, totNGrams)
@@ -115,14 +115,14 @@ func ExampleNGrams() {
 // TestNGramUnion tests the functions for constructing unions of n-grams
 func TestNGramUnion(t *testing.T) {
 	testCases := []struct {
-		name           string
+		testhelper.ID
 		m1, m2         map[string]int
 		expLen         int
 		expWeightedLen int
 		expUnion       map[string]int
 	}{
 		{
-			name: "two the same",
+			ID: testhelper.MkID("two the same"),
 			m1: map[string]int{
 				"ab": 1,
 				"bc": 99,
@@ -139,7 +139,7 @@ func TestNGramUnion(t *testing.T) {
 			},
 		},
 		{
-			name: "two different",
+			ID: testhelper.MkID("two different"),
 			m1: map[string]int{
 				"ab": 1,
 				"bc": 99,
@@ -158,8 +158,8 @@ func TestNGramUnion(t *testing.T) {
 			},
 		},
 		{
-			name: "one empty",
-			m1:   map[string]int{},
+			ID: testhelper.MkID("one empty"),
+			m1: map[string]int{},
 			m2: map[string]int{
 				"cd": 1,
 				"ef": 99,
@@ -172,7 +172,7 @@ func TestNGramUnion(t *testing.T) {
 			},
 		},
 		{
-			name: "one nil",
+			ID: testhelper.MkID("one nil"),
 			m2: map[string]int{
 				"cd": 1,
 				"ef": 99,
@@ -186,8 +186,7 @@ func TestNGramUnion(t *testing.T) {
 		},
 	}
 
-	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
+	for _, tc := range testCases {
 		m1, m2 := tc.m1, tc.m2
 		for _, order := range []string{"m1/m2", "m2/m1"} {
 			if order == "m2/m1" {
@@ -196,7 +195,7 @@ func TestNGramUnion(t *testing.T) {
 
 			m := strdist.NGramUnion(m1, m2)
 			if len(m) != tc.expLen {
-				t.Log(tcID + " (" + order + ")")
+				t.Log(tc.IDStr() + " (" + order + ")")
 				t.Logf("\t: length   expected: %d", tc.expLen)
 				t.Logf("\t: length calculated: %d", len(m))
 				t.Errorf("\t: unexpected length of the union")
@@ -204,7 +203,7 @@ func TestNGramUnion(t *testing.T) {
 
 			calcLen := strdist.NGramLenUnion(m1, m2)
 			if len(m) != calcLen {
-				t.Log(tcID + " (" + order + ")")
+				t.Log(tc.IDStr() + " (" + order + ")")
 				t.Logf("\t: length   expected: %d", tc.expLen)
 				t.Logf("\t: length calculated: %d", calcLen)
 				t.Errorf("\t: unexpected length from NGramLenUnion")
@@ -212,14 +211,14 @@ func TestNGramUnion(t *testing.T) {
 
 			calcLen = strdist.NGramWeightedLenUnion(m1, m2)
 			if tc.expWeightedLen != calcLen {
-				t.Log(tcID + " (" + order + ")")
+				t.Log(tc.IDStr() + " (" + order + ")")
 				t.Logf("\t: length   expected: %d", tc.expWeightedLen)
 				t.Logf("\t: length calculated: %d", calcLen)
 				t.Errorf("\t: unexpected length from NGramWeightedLenUnion")
 			}
 
 			if !strdist.NGramsEqual(m, tc.expUnion) {
-				t.Log(tcID + " (" + order + ")")
+				t.Log(tc.IDStr() + " (" + order + ")")
 				t.Logf("\t: union  created: %v", m)
 				t.Logf("\t: union expected: %v", tc.expUnion)
 				t.Error("\t: unexpected union")
@@ -232,14 +231,14 @@ func TestNGramUnion(t *testing.T) {
 // of n-grams
 func TestNGramIntersection(t *testing.T) {
 	testCases := []struct {
-		name            string
+		testhelper.ID
 		m1, m2          map[string]int
 		expLen          int
 		expWeightedLen  int
 		expIntersection map[string]int
 	}{
 		{
-			name: "two the same",
+			ID: testhelper.MkID("two the same"),
 			m1: map[string]int{
 				"ab": 1,
 				"bc": 99,
@@ -256,7 +255,7 @@ func TestNGramIntersection(t *testing.T) {
 			},
 		},
 		{
-			name: "one in common",
+			ID: testhelper.MkID("one in common"),
 			m1: map[string]int{
 				"ab": 1,
 				"bc": 99,
@@ -272,7 +271,7 @@ func TestNGramIntersection(t *testing.T) {
 			},
 		},
 		{
-			name: "two different",
+			ID: testhelper.MkID("two different"),
 			m1: map[string]int{
 				"ab": 1,
 				"bc": 99,
@@ -286,8 +285,8 @@ func TestNGramIntersection(t *testing.T) {
 			expIntersection: map[string]int{},
 		},
 		{
-			name: "one empty",
-			m1:   map[string]int{},
+			ID: testhelper.MkID("one empty"),
+			m1: map[string]int{},
 			m2: map[string]int{
 				"cd": 1,
 				"ef": 99,
@@ -297,7 +296,7 @@ func TestNGramIntersection(t *testing.T) {
 			expIntersection: map[string]int{},
 		},
 		{
-			name: "one nil",
+			ID: testhelper.MkID("one nil"),
 			m2: map[string]int{
 				"cd": 1,
 				"ef": 99,
@@ -308,8 +307,7 @@ func TestNGramIntersection(t *testing.T) {
 		},
 	}
 
-	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
+	for _, tc := range testCases {
 		m1, m2 := tc.m1, tc.m2
 		for _, order := range []string{"m1/m2", "m2/m1"} {
 			if order == "m2/m1" {
@@ -318,28 +316,28 @@ func TestNGramIntersection(t *testing.T) {
 
 			m := strdist.NGramIntersection(m1, m2)
 			if len(m) != tc.expLen {
-				t.Log(tcID + " (" + order + ")")
+				t.Log(tc.IDStr() + " (" + order + ")")
 				t.Errorf("\t:: the length should have been %d but was %d",
 					tc.expLen, len(m))
 			}
 
 			calcLen := strdist.NGramLenIntersection(m1, m2)
 			if len(m) != calcLen {
-				t.Log(tcID + " (" + order + ")")
+				t.Log(tc.IDStr() + " (" + order + ")")
 				t.Errorf("\t: NGramLenIntersection: expected len: %d got: %d",
 					tc.expLen, calcLen)
 			}
 
 			calcLen = strdist.NGramWeightedLenIntersection(m1, m2)
 			if tc.expWeightedLen != calcLen {
-				t.Log(tcID + " (" + order + ")")
+				t.Log(tc.IDStr() + " (" + order + ")")
 				t.Errorf(
 					"\t: NGramWeightedLenIntersection expected len: %d got: %d",
 					tc.expWeightedLen, calcLen)
 			}
 
 			if !strdist.NGramsEqual(m, tc.expIntersection) {
-				t.Log(tcID + " (" + order + ")")
+				t.Log(tc.IDStr() + " (" + order + ")")
 				t.Errorf("\t: bad intersection: expected: %v got: %v",
 					tc.expIntersection, m)
 			}
@@ -350,12 +348,12 @@ func TestNGramIntersection(t *testing.T) {
 // TestNGramsEqual tests the NGramsEqual function
 func TestNGramsEqual(t *testing.T) {
 	testCases := []struct {
-		name     string
+		testhelper.ID
 		m1, m2   map[string]int
 		expEqual bool
 	}{
 		{
-			name: "both identical",
+			ID: testhelper.MkID("both identical"),
 			m1: map[string]int{
 				"ab": 1,
 				"bc": 2,
@@ -367,7 +365,7 @@ func TestNGramsEqual(t *testing.T) {
 			expEqual: true,
 		},
 		{
-			name: "count differs",
+			ID: testhelper.MkID("count differs"),
 			m1: map[string]int{
 				"ab": 1,
 				"bc": 2,
@@ -378,7 +376,7 @@ func TestNGramsEqual(t *testing.T) {
 			},
 		},
 		{
-			name: "length differs",
+			ID: testhelper.MkID("length differs"),
 			m1: map[string]int{
 				"ab": 1,
 				"bc": 2,
@@ -390,7 +388,7 @@ func TestNGramsEqual(t *testing.T) {
 			},
 		},
 		{
-			name: "keys differ",
+			ID: testhelper.MkID("keys differ"),
 			m1: map[string]int{
 				"ab": 1,
 				"bc": 2,
@@ -402,7 +400,7 @@ func TestNGramsEqual(t *testing.T) {
 		},
 	}
 
-	for i, tc := range testCases {
+	for _, tc := range testCases {
 		m1, m2 := tc.m1, tc.m2
 		for _, order := range []string{"m1/m2", "m2/m1"} {
 			if order == "m2/m1" {
@@ -410,8 +408,7 @@ func TestNGramsEqual(t *testing.T) {
 			}
 
 			if strdist.NGramsEqual(m1, m2) != tc.expEqual {
-				t.Errorf("test %d: %s (%s): failed",
-					i, tc.name, order)
+				t.Errorf("%s (%s): failed", tc.IDStr(), order)
 			}
 		}
 	}
@@ -420,13 +417,13 @@ func TestNGramsEqual(t *testing.T) {
 // TestOverlapCoefficient tests the OverlapCoefficient functions
 func TestOverlapCoefficient(t *testing.T) {
 	testCases := []struct {
-		name           string
+		testhelper.ID
 		m1, m2         map[string]int
 		expVal         float64
 		expWeightedVal float64
 	}{
 		{
-			name: "m1 is distinct from m2",
+			ID: testhelper.MkID("m1 is distinct from m2"),
 			m1: map[string]int{
 				"ab": 1,
 				"bc": 2,
@@ -442,7 +439,7 @@ func TestOverlapCoefficient(t *testing.T) {
 			expWeightedVal: 0.0,
 		},
 		{
-			name: "m1 is a subset of m2",
+			ID: testhelper.MkID("m1 is a subset of m2"),
 			m1: map[string]int{
 				"ab": 1,
 				"bc": 2,
@@ -456,7 +453,7 @@ func TestOverlapCoefficient(t *testing.T) {
 			expWeightedVal: 1.0,
 		},
 		{
-			name: "m1 and m2 overlap",
+			ID: testhelper.MkID("m1 and m2 overlap"),
 			m1: map[string]int{
 				"ab": 1,
 				"bc": 2,
@@ -471,33 +468,32 @@ func TestOverlapCoefficient(t *testing.T) {
 			expWeightedVal: 0.5,
 		},
 		{
-			name:           "both empty",
+			ID:             testhelper.MkID("both empty"),
 			m1:             map[string]int{},
 			m2:             map[string]int{},
 			expVal:         1.0,
 			expWeightedVal: 1.0,
 		},
 		{
-			name:           "both nil",
+			ID:             testhelper.MkID("both nil"),
 			expVal:         1.0,
 			expWeightedVal: 1.0,
 		},
 	}
 
-	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
+	for _, tc := range testCases {
 		oc := strdist.OverlapCoefficient(tc.m1, tc.m2)
 
 		const epsilon = 0.00001
 		if !mathutil.AlmostEqual(oc, tc.expVal, epsilon) {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Errorf("\t: the returned coefficient should have been"+
 				" within %f of %9.7f but was %9.7f",
 				epsilon, tc.expVal, oc)
 		}
 		woc := strdist.WeightedOverlapCoefficient(tc.m1, tc.m2)
 		if !mathutil.AlmostEqual(woc, tc.expWeightedVal, epsilon) {
-			t.Log(tcID + " (weighted)")
+			t.Log(tc.IDStr() + " (weighted)")
 			t.Errorf("\t: the returned coefficient should have been"+
 				" within %f of %9.7f but was %9.7f",
 				epsilon, tc.expWeightedVal, woc)
@@ -507,27 +503,27 @@ func TestOverlapCoefficient(t *testing.T) {
 
 func TestNGramDot(t *testing.T) {
 	testCases := []struct {
-		name   string
+		testhelper.ID
 		s1, s2 string
 		ngLen  int
 		expDot int64
 	}{
 		{
-			name:   "same string",
+			ID:     testhelper.MkID("same string"),
 			s1:     "abab",
 			s2:     "abab",
 			ngLen:  2,
 			expDot: 5,
 		},
 		{
-			name:   "different strings, no common n-grams",
+			ID:     testhelper.MkID("different strings, no common n-grams"),
 			s1:     "abab",
 			s2:     "cdcd",
 			ngLen:  2,
 			expDot: 0,
 		},
 		{
-			name:   "different strings, one common n-gram",
+			ID:     testhelper.MkID("different strings, one common n-gram"),
 			s1:     "abab",
 			s2:     "cdcdba",
 			ngLen:  2,
@@ -535,19 +531,17 @@ func TestNGramDot(t *testing.T) {
 		},
 	}
 
-	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
-
+	for _, tc := range testCases {
 		ngS1, err := strdist.NGrams(tc.s1, tc.ngLen)
 		if err != nil {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Errorf("\t: Couldn't create the ngram set: %s\n", err)
 			continue
 		}
 
 		ngS2, err := strdist.NGrams(tc.s2, tc.ngLen)
 		if err != nil {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Errorf("\t: Couldn't create the ngram set: %s\n", err)
 			continue
 		}
@@ -555,7 +549,7 @@ func TestNGramDot(t *testing.T) {
 		dot := strdist.Dot(ngS1, ngS2)
 
 		if dot != tc.expDot {
-			t.Log(tcID)
+			t.Log(tc.IDStr())
 			t.Errorf("\t: bad Dot product - expected %d, got %d\n",
 				tc.expDot, dot)
 		}
@@ -580,18 +574,17 @@ func TestNGramLength(t *testing.T) {
 		},
 	}
 
-	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: s = %s", i, tc.s)
+	for _, tc := range testCases {
 		ngs, err := strdist.NGrams(tc.s, tc.ngLen)
 		if err != nil {
-			t.Log(tcID)
+			t.Log("test: " + tc.s)
 			t.Errorf("\t: Couldn't create the ngram set: %s\n", err)
 			continue
 		}
 		l := ngs.Length()
 		const epsilon = 0.001
 		if !mathutil.AlmostEqual(l, tc.expLen, epsilon) {
-			t.Log(tcID)
+			t.Log("test: " + tc.s)
 			t.Errorf("\t: length differs by more than %f"+
 				" - expected %.4f, got %.4f\n",
 				epsilon, tc.expLen, l)
