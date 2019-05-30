@@ -1,3 +1,5 @@
+[![GoDoc](https://godoc.org/github.com/nickwells/strdist.mod?status.png)](https://godoc.org/github.com/nickwells/strdist.mod)
+
 # strdist
 String distance metrics
 
