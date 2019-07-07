@@ -1,4 +1,4 @@
-github.com/nickwells/mathutil.mod v1.0.5 h1:qJ1pkfDLgEuBeR3arhyURiiZjODma5ZzrDifYeXl8e4=
-github.com/nickwells/mathutil.mod v1.0.5/go.mod h1:TQUWJ4u5ShqAGR6BBSyHYAGDgZgB86tU/rBGIg/ER2g=
-github.com/nickwells/testhelper.mod v1.3.5 h1:Qob6InjnYJI4pbfCqCBwDFz9w0RmqKATWC7rDIUsYDU=
-github.com/nickwells/testhelper.mod v1.3.5/go.mod h1:Ct/U2PjL0n9hGc+US6uR/s4NxSRI33NM+0ZkrDkG0XI=
+github.com/nickwells/mathutil.mod v1.0.6 h1:ZzzamM+h5AF2lSQhfSfFftPtMtj3rte2Zu3F/2wj18A=
+github.com/nickwells/mathutil.mod v1.0.6/go.mod h1:VJFj64pzuQxBrMtE0t0oTnTqKik1xE4Fa2Ar8oao3lA=
+github.com/nickwells/testhelper.mod v1.3.6 h1:O2J4tJ5Nmj8B00MdTkhh7ejCMJndUjgOaIeNEJlJsOs=
+github.com/nickwells/testhelper.mod v1.3.6/go.mod h1:Ct/U2PjL0n9hGc+US6uR/s4NxSRI33NM+0ZkrDkG0XI=
