@@ -53,8 +53,8 @@ func TestConvertStrDist(t *testing.T) {
 	for _, tc := range testCases {
 		strsAll := convertStrDist(tc.dists)
 		strsShort := convertStrDistN(tc.n, tc.dists)
-		checkLen(t, tc.IDStr(), "all", len(strsAll), tc.expLen)
-		checkLen(t, tc.IDStr(), "short", len(strsShort), tc.expShortLen)
+		testhelper.CmpValInt(t, tc.IDStr(), "all", len(strsAll), tc.expLen)
+		testhelper.CmpValInt(t, tc.IDStr(), "short", len(strsShort), tc.expShortLen)
 		if len(strsAll) > 0 {
 			checkVal(t, tc.IDStr(), "all", "first", strsAll[0], tc.expFirstVal)
 			checkVal(t, tc.IDStr(), "all", "last",
@@ -77,16 +77,6 @@ func TestConvertStrDist(t *testing.T) {
 			t.Errorf("\t: bad last val (short): should be: '%s', was: '%s'\n",
 				tc.expLastShortVal, strsShort[len(strsShort)-1])
 		}
-	}
-}
-
-// checkLen reports lengths that differ from expectation
-func checkLen(t *testing.T, tcID, name string, l, expLen int) {
-	t.Helper()
-	if l != expLen {
-		t.Log(tcID)
-		t.Errorf("\t: bad conversion (%s): len should be: %d, was: %d\n",
-			name, expLen, l)
 	}
 }
 

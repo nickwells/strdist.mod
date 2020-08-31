@@ -3,7 +3,6 @@ package strdist_test
 import (
 	"testing"
 
-	"github.com/nickwells/mathutil.mod/mathutil"
 	"github.com/nickwells/strdist.mod/strdist"
 	"github.com/nickwells/testhelper.mod/testhelper"
 )
@@ -36,58 +35,39 @@ func TestJaccard(t *testing.T) {
 		ngs1, err := strdist.NGrams(tc.s1, 2)
 		if err != nil {
 			t.Log(tc.IDStr())
-			t.Errorf("\t: Couldn't construct the ngrams for %s: %s",
-				tc.s1, err)
+			t.Errorf("\t: Couldn't construct the ngrams for %q: %s", tc.s1, err)
 		}
 		ngs2, err := strdist.NGrams(tc.s2, 2)
 		if err != nil {
 			t.Log(tc.IDStr())
-			t.Errorf("\t: Couldn't construct the ngrams for %s: %s", tc.s2, err)
+			t.Errorf("\t: Couldn't construct the ngrams for %q: %s", tc.s2, err)
 		}
-		ji := strdist.JaccardIndex(ngs1, ngs2)
 
 		const epsilon = 0.00001
-		if !mathutil.AlmostEqual(ji, tc.expVal, epsilon) {
-			t.Log(tc.IDStr())
-			t.Errorf("\t: the returned index should have been"+
-				" within %f of %9.7f but was %9.7f",
-				epsilon, tc.expVal, ji)
-		}
+		ji := strdist.JaccardIndex(ngs1, ngs2)
+		testhelper.CmpValFloat64(t, tc.IDStr(), "Jaccard index",
+			ji, tc.expVal, epsilon)
 
 		ji, err = strdist.JaccardDistance(tc.s1, tc.s2, 2)
 		if err != nil {
 			t.Log(tc.IDStr())
-			t.Errorf("\t: Unexpected error calculating the JaccardDistance: %s",
-				err)
+			t.Errorf("\t: Couldn't calculate the JaccardDistance: %s", err)
 		}
-		if !mathutil.AlmostEqual(ji, 1.0-tc.expVal, epsilon) {
-			t.Log(tc.IDStr())
-			t.Errorf("\t: the returned distance should have been"+
-				" within %f of %9.7f but was %9.7f",
-				epsilon, 1.0-tc.expVal, ji)
-		}
+		testhelper.CmpValFloat64(t, tc.IDStr(), "Jaccard distance",
+			ji, 1.0-tc.expVal, epsilon)
 
 		wji := strdist.WeightedJaccardIndex(ngs1, ngs2)
-		if !mathutil.AlmostEqual(wji, tc.expWeightedVal, epsilon) {
-			t.Log(tc.IDStr() + " (weighted)")
-			t.Errorf("\t: the returned index should have been"+
-				" within %f of %9.7f but was %9.7f",
-				epsilon, tc.expWeightedVal, wji)
-		}
+		testhelper.CmpValFloat64(t, tc.IDStr(), "weighted Jaccard index",
+			wji, tc.expWeightedVal, epsilon)
 
 		wji, err = strdist.WeightedJaccardDistance(tc.s1, tc.s2, 2)
 		if err != nil {
 			t.Log(tc.IDStr() + " (weighted)")
-			t.Errorf("\t: Unexpected error calculating the"+
-				" WeightedJaccardDistance: %s",
+			t.Errorf("\t: Couldn't calculate the WeightedJaccardDistance: %s",
 				err)
 		}
-		if !mathutil.AlmostEqual(wji, 1.0-tc.expWeightedVal, epsilon) {
-			t.Log(tc.IDStr() + " (weighted)")
-			t.Errorf("\t: the returned distance should have been"+
-				" within %f of %9.7f but was %9.7f",
-				epsilon, 1.0-tc.expWeightedVal, wji)
-		}
+		testhelper.CmpValFloat64(t, tc.IDStr(), "weighted Jaccard distance",
+			wji, 1.0-tc.expWeightedVal, epsilon)
 	}
 }
 
@@ -129,25 +109,27 @@ func TestJaccardFinder(t *testing.T) {
 			expNStringsFlatCase: []string{},
 		},
 		{
-			ID:                  testhelper.MkID("short population entry"),
-			ngLen:               2,
-			minStrLen:           4,
-			threshold:           0.3,
-			maxResults:          1,
-			target:              "hell",
-			pop:                 []string{"HELLO", "hellos", "hel", "world"},
+			ID:         testhelper.MkID("short population entry"),
+			ngLen:      2,
+			minStrLen:  4,
+			threshold:  0.3,
+			maxResults: 1,
+			target:     "hell",
+			pop:        []string{"HELLO", "hellos", "hel", "world"},
+
 			expStringsNoChange:  []string{},
 			expStringsFlatCase:  []string{"HELLO"},
 			expNStringsFlatCase: []string{"HELLO"},
 		},
 		{
-			ID:                  testhelper.MkID("empty target"),
-			ngLen:               2,
-			minStrLen:           0,
-			threshold:           0.3,
-			maxResults:          1,
-			target:              "",
-			pop:                 []string{"", "HELLO", "hellos", "hel", "world"},
+			ID:         testhelper.MkID("empty target"),
+			ngLen:      2,
+			minStrLen:  0,
+			threshold:  0.3,
+			maxResults: 1,
+			target:     "",
+			pop:        []string{"", "HELLO", "hellos", "hel", "world"},
+
 			expStringsNoChange:  []string{""},
 			expStringsFlatCase:  []string{""},
 			expNStringsFlatCase: []string{""},
@@ -159,16 +141,14 @@ func TestJaccardFinder(t *testing.T) {
 			tc.ngLen, tc.minStrLen, tc.threshold, strdist.NoCaseChange)
 		if err != nil {
 			t.Log(tc.IDStr())
-			t.Errorf("Couldn't create the NoCaseChange JaccardFinder: %s",
-				err)
+			t.Errorf("Couldn't create the NoCaseChange JaccardFinder: %s", err)
 			continue
 		}
 		flatCaseFinder, err := strdist.NewJaccardFinder(
 			tc.ngLen, tc.minStrLen, tc.threshold, strdist.ForceToLower)
 		if err != nil {
 			t.Log(tc.IDStr())
-			t.Errorf("Couldn't create the ForceToLower JaccardFinder: %s",
-				err)
+			t.Errorf("Couldn't create the ForceToLower JaccardFinder: %s", err)
 			continue
 		}
 

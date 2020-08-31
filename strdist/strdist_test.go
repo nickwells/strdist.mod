@@ -22,12 +22,7 @@ func TestStrDistToString(t *testing.T) {
 
 	for _, tc := range testCases {
 		s := tc.dist.String()
-		if s != tc.expStr {
-			t.Log(tc.IDStr())
-			t.Logf("\t:      got: %s\n", s)
-			t.Logf("\t: expected: %s\n", tc.expStr)
-			t.Errorf("\t: bad string conversion\n")
-		}
+		testhelper.CmpValString(t, tc.IDStr(), "StrDist.String()", s, tc.expStr)
 	}
 
 }
@@ -41,28 +36,25 @@ func TestStrDistCmp(t *testing.T) {
 		{Str: "e", Dist: 1.3},
 	}
 	testCases := []struct {
-		name   string
+		testhelper.ID
 		i      int
 		j      int
 		expVal bool
 	}{
-		{name: "same", i: 0, j: 0, expVal: false},
-		{name: "same dist, str[i] < str[j]", i: 0, j: 1, expVal: true},
-		{name: "same dist, str[i] > str[j]", i: 1, j: 0, expVal: false},
-		{name: "dist[i] < dist[j]", i: 2, j: 4, expVal: true},
-		{name: "dist[i] > dist[j]", i: 4, j: 2, expVal: false},
+		{ID: testhelper.MkID("same"), i: 0, j: 0, expVal: false},
+		{ID: testhelper.MkID("same dist, str[i] < str[j]"), i: 0, j: 1, expVal: true},
+		{ID: testhelper.MkID("same dist, str[i] > str[j]"), i: 1, j: 0, expVal: false},
+		{ID: testhelper.MkID("dist[i] < dist[j]"), i: 2, j: 4, expVal: true},
+		{ID: testhelper.MkID("dist[i] > dist[j]"), i: 4, j: 2, expVal: false},
 	}
 
-	for i, tc := range testCases {
-		tcID := fmt.Sprintf("test %d: %s", i, tc.name)
+	for _, tc := range testCases {
+		id := tc.IDStr() +
+			fmt.Sprintf(" - Cmp(%d (%q), %d (%q))",
+				tc.i, dists[tc.i], tc.j, dists[tc.j])
+
 		val := strdist.SDSlice(dists).Cmp(tc.i, tc.j)
-		if val != tc.expVal {
-			t.Log(tcID)
-			t.Logf("\t: Comparing (%2d) %s\n", tc.i, dists[tc.i])
-			t.Logf("\t:      With (%2d) %s\n", tc.j, dists[tc.j])
-			t.Errorf("\t: bad comparison, expected %t, got %t\n",
-				tc.expVal, val)
-		}
-	}
 
+		testhelper.CmpValBool(t, id, "comparison", val, tc.expVal)
+	}
 }

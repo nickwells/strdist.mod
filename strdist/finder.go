@@ -17,7 +17,7 @@ const (
 	ForceToLower
 )
 
-// DistAlgo describes the algorithm which the Finder will use to
+// DistAlgo describes the algorithm which the Finder will use to calculate
 // distance. There is a Prep func provided which will allow some common tasks
 // to be performed before the distance is calculated - some algorithms can
 // cache some intermediate results to save time when calculating the
@@ -41,7 +41,7 @@ type Finder struct {
 	MinStrLen int
 	// T is the threshold for similarity for this finder
 	T float64
-	// CH, if set to ForceToLower, will convert all strings to lower case
+	// CM, if set to ForceToLower, will convert all strings to lower case
 	// before generating the distance
 	CM CaseMod
 	// Algo is the algorithm with which to calculate the distance between two

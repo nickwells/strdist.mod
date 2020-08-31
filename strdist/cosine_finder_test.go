@@ -3,7 +3,6 @@ package strdist_test
 import (
 	"testing"
 
-	"github.com/nickwells/mathutil.mod/mathutil"
 	"github.com/nickwells/strdist.mod/strdist"
 	"github.com/nickwells/testhelper.mod/testhelper"
 )
@@ -74,34 +73,20 @@ func TestNewNGramsFinder(t *testing.T) {
 			if f == nil {
 				t.Log(tc.IDStr())
 				t.Errorf("\t: a nil pointer was returned but no error\n")
-			} else {
-				ca, ok := f.Algo.(*strdist.CosineAlgo)
-				if !ok {
-					t.Log(tc.IDStr())
-					t.Errorf("\t: the Algo should be a *CosineAlgo\n")
-				} else {
-					if ca.N != tc.ngLen {
-						t.Log(tc.IDStr())
-						t.Errorf("\t: N-Gram Len should be: %d, was: %d\n",
-							tc.ngLen, ca.N)
-					}
-				}
-				if f.MinStrLen != tc.minStrLen {
-					t.Log(tc.IDStr())
-					t.Errorf("\t: minStrLen should be: %d, was: %d\n",
-						tc.minStrLen, f.MinStrLen)
-				}
-				if f.T != tc.threshold {
-					t.Log(tc.IDStr())
-					t.Errorf("\t: threshold should be: %f, was: %f\n",
-						tc.threshold, f.T)
-				}
-				if f.CM != tc.caseMod {
-					t.Log(tc.IDStr())
-					t.Errorf("\t: caseMod should be: %d, was: %d\n",
-						tc.caseMod, f.CM)
-				}
+				continue
 			}
+
+			id := tc.IDStr()
+			ca, ok := f.Algo.(*strdist.CosineAlgo)
+			if !ok {
+				t.Log(tc.IDStr())
+				t.Errorf("\t: the Algo should be a *CosineAlgo\n")
+			} else {
+				testhelper.CmpValInt(t, id, "N-Gram length", ca.N, tc.ngLen)
+			}
+			testhelper.CmpValInt(t, id, "MinStrLen", f.MinStrLen, tc.minStrLen)
+			testhelper.CmpValInt(t, id, "caseMod", int(f.CM), int(tc.caseMod))
+			testhelper.CmpValFloat64(t, id, "threshold", f.T, tc.threshold, 0.0)
 		}
 	}
 }
@@ -172,13 +157,8 @@ func TestCosine(t *testing.T) {
 
 		if testhelper.CheckExpErr(t, err, tc) &&
 			err == nil {
-			const epsilon = 0.00001
-			if !mathutil.AlmostEqual(dist, tc.expDist, epsilon) {
-				t.Log(tc.IDStr())
-				t.Errorf("\t: the distance differs by more than %f"+
-					" - expected: %.6f, got %.6f\n",
-					epsilon, tc.expDist, dist)
-			}
+			testhelper.CmpValFloat64(t, tc.IDStr(), "distance",
+				dist, tc.expDist, 0.00001)
 		}
 	}
 }

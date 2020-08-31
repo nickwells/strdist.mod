@@ -13,10 +13,10 @@ import (
 func TestNGrams(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
+		testhelper.ExpErr
 		s                 string
 		n                 int
 		expDistinctNGrams int
-		expErr            bool
 	}{
 		{
 			ID:                testhelper.MkID("some Repeats"),
@@ -38,48 +38,31 @@ func TestNGrams(t *testing.T) {
 		},
 		{
 			ID:                testhelper.MkID("bad n - zero"),
+			ExpErr:            testhelper.MkExpErr(""),
 			s:                 "hel",
 			n:                 0,
 			expDistinctNGrams: 0,
-			expErr:            true,
 		},
 		{
 			ID:                testhelper.MkID("bad n - negative"),
+			ExpErr:            testhelper.MkExpErr(""),
 			s:                 "hel",
 			n:                 -1,
 			expDistinctNGrams: 0,
-			expErr:            true,
 		},
 	}
 
 	for _, tc := range testCases {
+		id := tc.IDStr() + fmt.Sprintf(" - NGrams(%q, %d)", tc.s, tc.n)
 		m, err := strdist.NGrams(tc.s, tc.n)
-
-		if tc.expErr {
-			if err == nil {
-				t.Log(tc.IDStr())
-				t.Logf("\t: NGrams('%s', %d): ", tc.s, tc.n)
-				t.Error("\t: should return an error but didn't")
-			}
-			continue
-		} else if err != nil {
-			t.Log(tc.IDStr())
-			t.Logf("\t: NGrams('%s', %d): ", tc.s, tc.n)
-			t.Errorf("\t: shouldn't return an error but did: %s", err)
-		}
-
-		if len(m) != tc.expDistinctNGrams {
-			t.Log(tc.IDStr())
-			t.Logf("\t: NGrams('%s', %d): ", tc.s, tc.n)
-			t.Errorf("\t: should return %d n-grams but returned %d",
-				tc.expDistinctNGrams, len(m))
-		}
+		testhelper.CheckExpErr(t, err, tc)
+		testhelper.CmpValInt(t, id, "distinct n-gram count",
+			len(m), tc.expDistinctNGrams)
 
 		totNGrams := 0
 		for k, v := range m {
 			if len(k) != tc.n {
-				t.Log(tc.IDStr())
-				t.Logf("\t: NGrams('%s', %d): ", tc.s, tc.n)
+				t.Log(id)
 				t.Errorf("\t: some n-grams are not of length %d eg: '%s'",
 					tc.n, k)
 				break
@@ -88,15 +71,11 @@ func TestNGrams(t *testing.T) {
 		}
 
 		expTotNGrams := len(tc.s) - tc.n + 1
-		if expTotNGrams < 0 {
+		if expTotNGrams < 0 || err != nil {
 			expTotNGrams = 0
 		}
-		if totNGrams != expTotNGrams {
-			t.Log(tc.IDStr())
-			t.Logf("\t: NGrams('%s', %d): ", tc.s, tc.n)
-			t.Errorf("\t: the string should contain %d n-grams not %d",
-				expTotNGrams, totNGrams)
-		}
+		testhelper.CmpValInt(t, id, "total # of n-grams",
+			totNGrams, expTotNGrams)
 	}
 }
 
