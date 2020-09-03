@@ -55,12 +55,12 @@ func TestLevenshtein(t *testing.T) {
 
 	for _, tc := range testCases {
 		dist := strdist.LevenshteinDistance(tc.a, tc.b)
-		testhelper.CmpValInt(t,
+		testhelper.DiffInt(t,
 			tc.IDStr(), fmt.Sprintf("LevenshteinDistance(%q, %q)", tc.a, tc.b),
 			dist, tc.expDist)
 
 		dist = strdist.LevenshteinDistance(tc.b, tc.a)
-		testhelper.CmpValInt(t,
+		testhelper.DiffInt(t,
 			tc.IDStr(), fmt.Sprintf("LevenshteinDistance(%q, %q)", tc.b, tc.a),
 			dist, tc.expDist)
 	}

@@ -45,7 +45,7 @@ func TestJaccard(t *testing.T) {
 
 		const epsilon = 0.00001
 		ji := strdist.JaccardIndex(ngs1, ngs2)
-		testhelper.CmpValFloat64(t, tc.IDStr(), "Jaccard index",
+		testhelper.DiffFloat64(t, tc.IDStr(), "Jaccard index",
 			ji, tc.expVal, epsilon)
 
 		ji, err = strdist.JaccardDistance(tc.s1, tc.s2, 2)
@@ -53,11 +53,11 @@ func TestJaccard(t *testing.T) {
 			t.Log(tc.IDStr())
 			t.Errorf("\t: Couldn't calculate the JaccardDistance: %s", err)
 		}
-		testhelper.CmpValFloat64(t, tc.IDStr(), "Jaccard distance",
+		testhelper.DiffFloat64(t, tc.IDStr(), "Jaccard distance",
 			ji, 1.0-tc.expVal, epsilon)
 
 		wji := strdist.WeightedJaccardIndex(ngs1, ngs2)
-		testhelper.CmpValFloat64(t, tc.IDStr(), "weighted Jaccard index",
+		testhelper.DiffFloat64(t, tc.IDStr(), "weighted Jaccard index",
 			wji, tc.expWeightedVal, epsilon)
 
 		wji, err = strdist.WeightedJaccardDistance(tc.s1, tc.s2, 2)
@@ -66,7 +66,7 @@ func TestJaccard(t *testing.T) {
 			t.Errorf("\t: Couldn't calculate the WeightedJaccardDistance: %s",
 				err)
 		}
-		testhelper.CmpValFloat64(t, tc.IDStr(), "weighted Jaccard distance",
+		testhelper.DiffFloat64(t, tc.IDStr(), "weighted Jaccard distance",
 			wji, 1.0-tc.expWeightedVal, epsilon)
 	}
 }

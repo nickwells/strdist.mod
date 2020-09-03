@@ -53,8 +53,8 @@ func TestConvertStrDist(t *testing.T) {
 	for _, tc := range testCases {
 		strsAll := convertStrDist(tc.dists)
 		strsShort := convertStrDistN(tc.n, tc.dists)
-		testhelper.CmpValInt(t, tc.IDStr(), "all", len(strsAll), tc.expLen)
-		testhelper.CmpValInt(t, tc.IDStr(), "short", len(strsShort), tc.expShortLen)
+		testhelper.DiffInt(t, tc.IDStr(), "all", len(strsAll), tc.expLen)
+		testhelper.DiffInt(t, tc.IDStr(), "short", len(strsShort), tc.expShortLen)
 		if len(strsAll) > 0 {
 			checkVal(t, tc.IDStr(), "all", "first", strsAll[0], tc.expFirstVal)
 			checkVal(t, tc.IDStr(), "all", "last",

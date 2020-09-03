@@ -56,7 +56,7 @@ func TestNGrams(t *testing.T) {
 		id := tc.IDStr() + fmt.Sprintf(" - NGrams(%q, %d)", tc.s, tc.n)
 		m, err := strdist.NGrams(tc.s, tc.n)
 		testhelper.CheckExpErr(t, err, tc)
-		testhelper.CmpValInt(t, id, "distinct n-gram count",
+		testhelper.DiffInt(t, id, "distinct n-gram count",
 			len(m), tc.expDistinctNGrams)
 
 		totNGrams := 0
@@ -74,7 +74,7 @@ func TestNGrams(t *testing.T) {
 		if expTotNGrams < 0 || err != nil {
 			expTotNGrams = 0
 		}
-		testhelper.CmpValInt(t, id, "total # of n-grams",
+		testhelper.DiffInt(t, id, "total # of n-grams",
 			totNGrams, expTotNGrams)
 	}
 }

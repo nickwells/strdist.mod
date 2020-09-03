@@ -82,11 +82,11 @@ func TestNewNGramsFinder(t *testing.T) {
 				t.Log(tc.IDStr())
 				t.Errorf("\t: the Algo should be a *CosineAlgo\n")
 			} else {
-				testhelper.CmpValInt(t, id, "N-Gram length", ca.N, tc.ngLen)
+				testhelper.DiffInt(t, id, "N-Gram length", ca.N, tc.ngLen)
 			}
-			testhelper.CmpValInt(t, id, "MinStrLen", f.MinStrLen, tc.minStrLen)
-			testhelper.CmpValInt(t, id, "caseMod", int(f.CM), int(tc.caseMod))
-			testhelper.CmpValFloat64(t, id, "threshold", f.T, tc.threshold, 0.0)
+			testhelper.DiffInt(t, id, "MinStrLen", f.MinStrLen, tc.minStrLen)
+			testhelper.DiffInt(t, id, "caseMod", int(f.CM), int(tc.caseMod))
+			testhelper.DiffFloat64(t, id, "threshold", f.T, tc.threshold, 0.0)
 		}
 	}
 }
@@ -157,7 +157,7 @@ func TestCosine(t *testing.T) {
 
 		if testhelper.CheckExpErr(t, err, tc) &&
 			err == nil {
-			testhelper.CmpValFloat64(t, tc.IDStr(), "distance",
+			testhelper.DiffFloat64(t, tc.IDStr(), "distance",
 				dist, tc.expDist, 0.00001)
 		}
 	}

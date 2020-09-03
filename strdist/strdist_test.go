@@ -22,7 +22,7 @@ func TestStrDistToString(t *testing.T) {
 
 	for _, tc := range testCases {
 		s := tc.dist.String()
-		testhelper.CmpValString(t, tc.IDStr(), "StrDist.String()", s, tc.expStr)
+		testhelper.DiffString(t, tc.IDStr(), "StrDist.String()", s, tc.expStr)
 	}
 
 }
@@ -55,6 +55,6 @@ func TestStrDistCmp(t *testing.T) {
 
 		val := strdist.SDSlice(dists).Cmp(tc.i, tc.j)
 
-		testhelper.CmpValBool(t, id, "comparison", val, tc.expVal)
+		testhelper.DiffBool(t, id, "comparison", val, tc.expVal)
 	}
 }

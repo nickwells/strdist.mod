@@ -63,11 +63,11 @@ func TestHamming(t *testing.T) {
 
 	for _, tc := range testCases {
 		dist := strdist.HammingDistance(tc.a, tc.b)
-		testhelper.CmpValFloat64(t,
+		testhelper.DiffFloat64(t,
 			fmt.Sprintf("HammingDistance(%q, %q)", tc.a, tc.b), "distance",
 			dist, tc.expDist, 0)
 		dist = strdist.HammingDistance(tc.b, tc.a)
-		testhelper.CmpValFloat64(t,
+		testhelper.DiffFloat64(t,
 			fmt.Sprintf("HammingDistance(%q, %q)", tc.b, tc.a), "distance",
 			dist, tc.expDist, 0)
 	}
