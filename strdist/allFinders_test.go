@@ -123,18 +123,14 @@ func TestAllFinders(t *testing.T) {
 			},
 		},
 		{
-			ID:     testhelper.MkID("scaledLev"),
-			finder: f.scaledLevFinder,
-			distFunc: func(s1, s2 string) float64 {
-				return strdist.ScaledLevDistance(s1, s2)
-			},
+			ID:       testhelper.MkID("scaledLev"),
+			finder:   f.scaledLevFinder,
+			distFunc: strdist.ScaledLevDistance,
 		},
 		{
-			ID:     testhelper.MkID("hamming"),
-			finder: f.hammingFinder,
-			distFunc: func(s1, s2 string) float64 {
-				return strdist.HammingDistance(s1, s2)
-			},
+			ID:       testhelper.MkID("hamming"),
+			finder:   f.hammingFinder,
+			distFunc: strdist.HammingDistance,
 		},
 	}
 
