@@ -47,41 +47,55 @@ type Finder struct {
 	// Algo is the algorithm with which to calculate the distance between two
 	// strings
 	Algo DistAlgo
+
+	// pop holds the default population of strings for the Find... methods to
+	// search if no strings are provided.
+	pop []string
 }
 
 // NewFinder checks that the parameters are valid and creates a new
-// Finder if they are. The minStrLen and threshold must each be >=
+// Finder if they are. The minLen and threshold limit must each be >=
 // 0. A zero threshold wil require an exact match.
-func NewFinder(minStrLen int, threshold float64, cm CaseMod, a DistAlgo) (*Finder, error) {
-	if minStrLen < 0 {
+func NewFinder(minLen int, limit float64, cm CaseMod, a DistAlgo) (*Finder, error) {
+	if minLen < 0 {
 		return nil,
 			fmt.Errorf("bad minimum string length (%d) - it should be >= 0",
-				minStrLen)
+				minLen)
 	}
-	if threshold < 0.0 {
+	if limit < 0.0 {
 		return nil,
-			fmt.Errorf("bad threshold (%f) - it should be >= 0.0", threshold)
+			fmt.Errorf("bad threshold (%f) - it should be >= 0.0", limit)
 	}
 	f := &Finder{
-		MinStrLen: minStrLen,
-		T:         threshold,
+		MinStrLen: minLen,
+		T:         limit,
 		CM:        cm,
 		Algo:      a,
 	}
 	return f, nil
 }
 
+// SetPop will set the population of strings to be searched by the
+// Find... methods
+func (f *Finder) SetPop(pop []string) {
+	f.pop = pop
+}
+
 // FindLike returns StrDists for those strings in the population (pop) which
 // are similar to the string (s). A string is similar if it has a common
 // difference calculated from the n-grams which is less than or equal to the
-// NGram finder's threshold value
+// NGram finder's threshold value. If the list of strings to search is empty
+// then the default population from the Finder will be used. This should be
+// set in advance using the SetPop method.
 func (f *Finder) FindLike(s string, pop ...string) []StrDist {
-	lp := len(pop)
-	if lp == 0 || len(s) < f.MinStrLen {
+	if len(pop) == 0 {
+		pop = f.pop
+	}
+	if len(pop) == 0 || len(s) < f.MinStrLen {
 		return []StrDist{}
 	}
 
-	dists := make([]StrDist, 0, lp)
+	dists := make([]StrDist, 0, len(pop))
 
 	f.Algo.Prep(s, f.CM)
 
