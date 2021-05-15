@@ -569,5 +569,4 @@ func TestNGramLength(t *testing.T) {
 				epsilon, tc.expLen, l)
 		}
 	}
-
 }

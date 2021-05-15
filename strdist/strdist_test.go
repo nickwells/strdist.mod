@@ -24,7 +24,6 @@ func TestStrDistToString(t *testing.T) {
 		s := tc.dist.String()
 		testhelper.DiffString(t, tc.IDStr(), "StrDist.String()", s, tc.expStr)
 	}
-
 }
 
 func TestStrDistCmp(t *testing.T) {

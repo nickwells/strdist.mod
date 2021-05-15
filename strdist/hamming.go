@@ -71,7 +71,7 @@ func (a *HammingAlgo) Dist(_, s string, cm CaseMod) float64 {
 // by the difference in lengths. Note that it compares runes rather than
 // characters or chars
 func HammingDistance(a, b string) float64 {
-	var d = utf8.RuneCountInString(b) - utf8.RuneCountInString(a)
+	d := utf8.RuneCountInString(b) - utf8.RuneCountInString(a)
 	if d < 0 {
 		d *= -1
 		a, b = b, a // a is longer than b so swap
