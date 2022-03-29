@@ -18,15 +18,13 @@ var CaseBlindLevenshteinFinder *Finder
 
 func init() {
 	var err error
-	DfltLevenshteinFinder, err =
-		NewLevenshteinFinder(
-			DfltMinStrLen, DfltLevenshteinThreshold, NoCaseChange)
+	DfltLevenshteinFinder, err = NewLevenshteinFinder(
+		DfltMinStrLen, DfltLevenshteinThreshold, NoCaseChange)
 	if err != nil {
 		panic("Cannot construct the default LevenshteinFinder: " + err.Error())
 	}
-	CaseBlindLevenshteinFinder, err =
-		NewLevenshteinFinder(
-			DfltMinStrLen, DfltLevenshteinThreshold, ForceToLower)
+	CaseBlindLevenshteinFinder, err = NewLevenshteinFinder(
+		DfltMinStrLen, DfltLevenshteinThreshold, ForceToLower)
 	if err != nil {
 		panic("Cannot construct the case-blind LevenshteinFinder: " +
 			err.Error())
@@ -47,9 +45,8 @@ type LevenshteinAlgo struct {
 // NewLevenshteinFinder returns a new Finder having a Levenshtein algo
 // and an error which will be non-nil if the parameters are invalid - see
 // NewFinder for details.
-func NewLevenshteinFinder(minStrLen int, threshold float64, cm CaseMod) (
-	*Finder, error,
-) {
+func NewLevenshteinFinder(minStrLen int, threshold float64, cm CaseMod,
+) (*Finder, error) {
 	return NewFinder(minStrLen, threshold, cm,
 		&LevenshteinAlgo{})
 }

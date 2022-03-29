@@ -19,16 +19,14 @@ var CaseBlindWeightedJaccardFinder *Finder
 
 func init() {
 	var err error
-	DfltWeightedJaccardFinder, err =
-		NewWeightedJaccardFinder(2,
-			DfltMinStrLen, DfltWeightedJaccardThreshold, NoCaseChange)
+	DfltWeightedJaccardFinder, err = NewWeightedJaccardFinder(
+		2, DfltMinStrLen, DfltWeightedJaccardThreshold, NoCaseChange)
 	if err != nil {
 		panic("Cannot construct the default WeightedJaccardFinder: " +
 			err.Error())
 	}
-	CaseBlindWeightedJaccardFinder, err =
-		NewWeightedJaccardFinder(2, DfltMinStrLen,
-			DfltWeightedJaccardThreshold, ForceToLower)
+	CaseBlindWeightedJaccardFinder, err = NewWeightedJaccardFinder(
+		2, DfltMinStrLen, DfltWeightedJaccardThreshold, ForceToLower)
 	if err != nil {
 		panic("Cannot construct the case-blind WeightedJaccardFinder: " +
 			err.Error())
@@ -46,7 +44,8 @@ type WeightedJaccardAlgo struct {
 // algo and an error which will be non-nil if the parameters are invalid. The
 // n-gram length must be > 0; for other invalid parameters see the NewFinder
 // func.
-func NewWeightedJaccardFinder(ngLen, minStrLen int, threshold float64, cm CaseMod) (*Finder, error) {
+func NewWeightedJaccardFinder(ngLen, minStrLen int, threshold float64, cm CaseMod,
+) (*Finder, error) {
 	if ngLen <= 0 {
 		return nil,
 			fmt.Errorf("bad N-Gram length (%d) - it should be > 0", ngLen)

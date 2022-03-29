@@ -19,13 +19,13 @@ var CaseBlindScaledLevFinder *Finder
 
 func init() {
 	var err error
-	DfltScaledLevFinder, err =
-		NewScaledLevFinder(DfltMinStrLen, DfltScaledLevThreshold, NoCaseChange)
+	DfltScaledLevFinder, err = NewScaledLevFinder(
+		DfltMinStrLen, DfltScaledLevThreshold, NoCaseChange)
 	if err != nil {
 		panic("Cannot construct the default ScaledLevFinder: " + err.Error())
 	}
-	CaseBlindScaledLevFinder, err =
-		NewScaledLevFinder(DfltMinStrLen, DfltScaledLevThreshold, ForceToLower)
+	CaseBlindScaledLevFinder, err = NewScaledLevFinder(
+		DfltMinStrLen, DfltScaledLevThreshold, ForceToLower)
 	if err != nil {
 		panic("Cannot construct the case-blind ScaledLevFinder: " +
 			err.Error())
@@ -46,9 +46,8 @@ type ScaledLevAlgo struct {
 // NewScaledLevFinder returns a new Finder having a ScaledLev algo and an
 // error which will be non-nil if the parameters are invalid - see NewFinder
 // for details.
-func NewScaledLevFinder(minStrLen int, threshold float64, cm CaseMod) (
-	*Finder, error,
-) {
+func NewScaledLevFinder(minStrLen int, threshold float64, cm CaseMod,
+) (*Finder, error) {
 	return NewFinder(minStrLen, threshold, cm,
 		&ScaledLevAlgo{})
 }

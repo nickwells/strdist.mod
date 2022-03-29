@@ -19,13 +19,13 @@ var CaseBlindJaccardFinder *Finder
 
 func init() {
 	var err error
-	DfltJaccardFinder, err =
-		NewJaccardFinder(2, DfltMinStrLen, DfltJaccardThreshold, NoCaseChange)
+	DfltJaccardFinder, err = NewJaccardFinder(
+		2, DfltMinStrLen, DfltJaccardThreshold, NoCaseChange)
 	if err != nil {
 		panic("Cannot construct the default JaccardFinder: " + err.Error())
 	}
-	CaseBlindJaccardFinder, err =
-		NewJaccardFinder(2, DfltMinStrLen, DfltJaccardThreshold, ForceToLower)
+	CaseBlindJaccardFinder, err = NewJaccardFinder(
+		2, DfltMinStrLen, DfltJaccardThreshold, ForceToLower)
 	if err != nil {
 		panic("Cannot construct the case-blind JaccardFinder: " + err.Error())
 	}
@@ -40,7 +40,8 @@ type JaccardAlgo struct {
 // NewJaccardFinder returns a new Finder having a Jaccard algo and an error
 // which will be non-nil if the parameters are invalid. The n-gram length
 // must be > 0; for other invalid parameters see the NewFinder func.
-func NewJaccardFinder(ngLen, minStrLen int, threshold float64, cm CaseMod) (*Finder, error) {
+func NewJaccardFinder(ngLen, minStrLen int, threshold float64, cm CaseMod,
+) (*Finder, error) {
 	if ngLen <= 0 {
 		return nil,
 			fmt.Errorf("bad N-Gram length (%d) - it should be > 0", ngLen)

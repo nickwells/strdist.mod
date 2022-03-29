@@ -20,13 +20,13 @@ var CaseBlindCosineFinder *Finder
 
 func init() {
 	var err error
-	DfltCosineFinder, err =
-		NewCosineFinder(2, DfltMinStrLen, DfltCosineThreshold, NoCaseChange)
+	DfltCosineFinder, err = NewCosineFinder(
+		2, DfltMinStrLen, DfltCosineThreshold, NoCaseChange)
 	if err != nil {
 		panic("Cannot construct the default CosineFinder: " + err.Error())
 	}
-	CaseBlindCosineFinder, err =
-		NewCosineFinder(2, DfltMinStrLen, DfltCosineThreshold, ForceToLower)
+	CaseBlindCosineFinder, err = NewCosineFinder(
+		2, DfltMinStrLen, DfltCosineThreshold, ForceToLower)
 	if err != nil {
 		panic("Cannot construct the case-blind CosineFinder: " + err.Error())
 	}
@@ -42,7 +42,8 @@ type CosineAlgo struct {
 // NewCosineFinder returns a new Finder having a cosine algo and an error
 // which will be non-nil if the parameters are invalid. The n-gram length
 // must be > 0; for other invalid parameters see the NewFinder func.
-func NewCosineFinder(ngLen, minStrLen int, threshold float64, cm CaseMod) (*Finder, error) {
+func NewCosineFinder(ngLen, minStrLen int, threshold float64, cm CaseMod,
+) (*Finder, error) {
 	if ngLen <= 0 {
 		return nil,
 			fmt.Errorf("bad N-Gram length (%d) - it should be > 0", ngLen)

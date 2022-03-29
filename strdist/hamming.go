@@ -15,13 +15,13 @@ var CaseBlindHammingFinder *Finder
 
 func init() {
 	var err error
-	DfltHammingFinder, err =
-		NewHammingFinder(DfltMinStrLen, DfltHammingThreshold, NoCaseChange)
+	DfltHammingFinder, err = NewHammingFinder(
+		DfltMinStrLen, DfltHammingThreshold, NoCaseChange)
 	if err != nil {
 		panic("Cannot construct the default HammingFinder: " + err.Error())
 	}
-	CaseBlindHammingFinder, err =
-		NewHammingFinder(DfltMinStrLen, DfltHammingThreshold, ForceToLower)
+	CaseBlindHammingFinder, err = NewHammingFinder(
+		DfltMinStrLen, DfltHammingThreshold, ForceToLower)
 	if err != nil {
 		panic("Cannot construct the case-blind HammingFinder: " +
 			err.Error())
@@ -41,7 +41,8 @@ type HammingAlgo struct {
 // NewHammingFinder returns a new Finder having a Hamming algo and an
 // error which will be non-nil if the parameters are invalid - see
 // NewFinder for details.
-func NewHammingFinder(minStrLen int, threshold float64, cm CaseMod) (*Finder, error) {
+func NewHammingFinder(minStrLen int, threshold float64, cm CaseMod,
+) (*Finder, error) {
 	return NewFinder(minStrLen, threshold, cm,
 		&HammingAlgo{})
 }
