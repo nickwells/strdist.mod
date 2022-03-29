@@ -3,7 +3,7 @@ package strdist
 import (
 	"testing"
 
-	"github.com/nickwells/testhelper.mod/testhelper"
+	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 
 func TestConvertStrDist(t *testing.T) {

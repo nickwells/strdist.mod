@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/nickwells/strdist.mod/strdist"
-	"github.com/nickwells/testhelper.mod/testhelper"
+	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 
 // TestLevenshtein ...

@@ -4,12 +4,14 @@ import (
 	"testing"
 
 	"github.com/nickwells/strdist.mod/strdist"
-	"github.com/nickwells/testhelper.mod/testhelper"
+	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 
 // finderChecker is a test Helper function that calls the finder function and
 // checks the results
-func finderChecker(t *testing.T, tID, subID, target string, pop []string, f *strdist.Finder, expect []string) {
+func finderChecker(t *testing.T, tID, subID, target string, pop []string,
+	f *strdist.Finder, expect []string,
+) {
 	t.Helper()
 	results := f.FindStrLike(target, pop...)
 	if testhelper.StringSliceDiff(expect, results) {
@@ -24,7 +26,9 @@ func finderChecker(t *testing.T, tID, subID, target string, pop []string, f *str
 
 // finderCheckerMaxN is a test Helper function that calls the limited results
 // finder function and checks the results
-func finderCheckerMaxN(t *testing.T, tID, subID, target string, pop []string, n int, f *strdist.Finder, expect []string) {
+func finderCheckerMaxN(t *testing.T, tID, subID, target string, pop []string,
+	n int, f *strdist.Finder, expect []string,
+) {
 	t.Helper()
 	results := f.FindNStrLike(n, target, pop...)
 	if testhelper.StringSliceDiff(expect, results) {

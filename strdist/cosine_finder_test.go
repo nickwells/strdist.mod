@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/nickwells/strdist.mod/strdist"
-	"github.com/nickwells/testhelper.mod/testhelper"
+	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 
 func TestNewNGramsFinder(t *testing.T) {
@@ -86,7 +86,7 @@ func TestNewNGramsFinder(t *testing.T) {
 			}
 			testhelper.DiffInt(t, id, "MinStrLen", f.MinStrLen, tc.minStrLen)
 			testhelper.DiffInt(t, id, "caseMod", int(f.CM), int(tc.caseMod))
-			testhelper.DiffFloat64(t, id, "threshold", f.T, tc.threshold, 0.0)
+			testhelper.DiffFloat(t, id, "threshold", f.T, tc.threshold, 0.0)
 		}
 	}
 }
@@ -157,7 +157,7 @@ func TestCosine(t *testing.T) {
 
 		if testhelper.CheckExpErr(t, err, tc) &&
 			err == nil {
-			testhelper.DiffFloat64(t, tc.IDStr(), "distance",
+			testhelper.DiffFloat(t, tc.IDStr(), "distance",
 				dist, tc.expDist, 0.00001)
 		}
 	}

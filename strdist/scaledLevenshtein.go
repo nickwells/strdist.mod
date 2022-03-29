@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/nickwells/mathutil.mod/mathutil"
+	"github.com/nickwells/mathutil.mod/v2/mathutil"
 )
 
 // DfltScaledLevFinder is a Finder with some default values suitable
@@ -46,7 +46,9 @@ type ScaledLevAlgo struct {
 // NewScaledLevFinder returns a new Finder having a ScaledLev algo and an
 // error which will be non-nil if the parameters are invalid - see NewFinder
 // for details.
-func NewScaledLevFinder(minStrLen int, threshold float64, cm CaseMod) (*Finder, error) {
+func NewScaledLevFinder(minStrLen int, threshold float64, cm CaseMod) (
+	*Finder, error,
+) {
 	return NewFinder(minStrLen, threshold, cm,
 		&ScaledLevAlgo{})
 }

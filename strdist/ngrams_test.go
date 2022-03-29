@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/nickwells/mathutil.mod/mathutil"
+	"github.com/nickwells/mathutil.mod/v2/mathutil"
 	"github.com/nickwells/strdist.mod/strdist"
-	"github.com/nickwells/testhelper.mod/testhelper"
+	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 
 // TestNGrams tests the NGrams function

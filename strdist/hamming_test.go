@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/nickwells/strdist.mod/strdist"
-	"github.com/nickwells/testhelper.mod/testhelper"
+	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 
 // TestHamming ...
@@ -63,11 +63,11 @@ func TestHamming(t *testing.T) {
 
 	for _, tc := range testCases {
 		dist := strdist.HammingDistance(tc.a, tc.b)
-		testhelper.DiffFloat64(t,
+		testhelper.DiffFloat(t,
 			fmt.Sprintf("HammingDistance(%q, %q)", tc.a, tc.b), "distance",
 			dist, tc.expDist, 0)
 		dist = strdist.HammingDistance(tc.b, tc.a)
-		testhelper.DiffFloat64(t,
+		testhelper.DiffFloat(t,
 			fmt.Sprintf("HammingDistance(%q, %q)", tc.b, tc.a), "distance",
 			dist, tc.expDist, 0)
 	}

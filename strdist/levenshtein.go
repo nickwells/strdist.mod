@@ -4,7 +4,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/nickwells/mathutil.mod/mathutil"
+	"github.com/nickwells/mathutil.mod/v2/mathutil"
 )
 
 // DfltLevenshteinFinder is a Finder with some suitable default values
@@ -47,7 +47,9 @@ type LevenshteinAlgo struct {
 // NewLevenshteinFinder returns a new Finder having a Levenshtein algo
 // and an error which will be non-nil if the parameters are invalid - see
 // NewFinder for details.
-func NewLevenshteinFinder(minStrLen int, threshold float64, cm CaseMod) (*Finder, error) {
+func NewLevenshteinFinder(minStrLen int, threshold float64, cm CaseMod) (
+	*Finder, error,
+) {
 	return NewFinder(minStrLen, threshold, cm,
 		&LevenshteinAlgo{})
 }
