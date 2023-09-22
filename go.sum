@@ -1,5 +1,5 @@
-github.com/nickwells/mathutil.mod/v2 v2.2.2 h1:oqqj/BQpO+nCvhoCc60Eh1ujC/jw/9g8g075riKA5z8=
-github.com/nickwells/mathutil.mod/v2 v2.2.2/go.mod h1:iMemGHs0c19VuPxoe2lu86p06BXBJAPGpUFQ2QABHDM=
+github.com/nickwells/mathutil.mod/v2 v2.3.0 h1:DwjCd05iqtXo62s0w20fOKRIfrzpa32LxXJF3hQ7fuM=
+github.com/nickwells/mathutil.mod/v2 v2.3.0/go.mod h1:iMemGHs0c19VuPxoe2lu86p06BXBJAPGpUFQ2QABHDM=
 github.com/nickwells/testhelper.mod/v2 v2.3.0 h1:b/EpnHiYr8dnr6C0a6zW2KAyHgfQ72pVw3cNklSzwxs=
 github.com/nickwells/testhelper.mod/v2 v2.3.0/go.mod h1:pdhf+XHRINEUH6a0OcwC98ETD3ZluAXKA5xOhC2I2Qk=
 golang.org/x/exp v0.0.0-20230905200255-921286631fa9 h1:GoHiUyI/Tp2nVkLI2mCxVkOjsbSXD66ic0XW0js0R9g=

@@ -1,7 +1,7 @@
 module github.com/nickwells/strdist.mod
 
 require (
-	github.com/nickwells/mathutil.mod/v2 v2.2.2
+	github.com/nickwells/mathutil.mod/v2 v2.3.0
 	github.com/nickwells/testhelper.mod/v2 v2.3.0
 )
 
