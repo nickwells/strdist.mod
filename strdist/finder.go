@@ -115,7 +115,19 @@ func (f *Finder) FindLike(s string, pop ...string) []StrDist {
 		})
 	}
 
-	sort.Slice(dists, func(i, j int) bool { return SDSlice(dists).Cmp(i, j) })
+	sort.Slice(dists, func(i, j int) bool {
+		if dists[i].Dist != dists[j].Dist {
+			return dists[i].Dist < dists[j].Dist
+		}
+
+		lenDiffI, lenDiffJ := len(dists[i].Str)-len(s), len(dists[j].Str)-len(s)
+		sqLenDiffI, sqLenDiffJ := lenDiffI*lenDiffI, lenDiffJ*lenDiffJ
+		if sqLenDiffI != sqLenDiffJ {
+			return sqLenDiffI < sqLenDiffJ
+		}
+
+		return dists[i].Str < dists[j].Str
+	})
 	return dists
 }
 
