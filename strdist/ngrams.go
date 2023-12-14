@@ -5,6 +5,25 @@ import (
 	"math"
 )
 
+// NGram is a slice of runes. It is extracted from a string by taking
+// contiguous sequences of runes from the string. So for instance with an
+// NGram size of 3 and a string of value "abcde" we would get NGrams: "abc",
+// "bcd" and "cde".
+//
+// We can also generate extra NGrams from this same string of "ab", "bc",
+// "cd" and "de" and "a", "b", "c", "d" and "e" if we choose to take the NGram
+// len as a maximum rather than as an absolute value.
+//
+// We can additionally extend the notion of an NGram to include nil runes
+// outside the scope of the source string. If we represent nil bytes as '.'
+// we can get the following extra NGrams: "..a", ".ab", ".a", "e..", "de."
+// and "e."
+//
+// We can also choose to clean up our source string by mapping all the
+// characters to their lower case equivalent and by removing certain
+// characters before generating the NGrams
+type NGram []rune
+
 // NGramSet represents a set of n-grams. Each n-gram has an associated weight
 // which is the number of occurrences in the original string from which it is
 // derived
@@ -39,7 +58,7 @@ func (ngs NGramSet) Length() float64 {
 // error will be returned
 func NGrams(s string, n int) (NGramSet, error) {
 	if n <= 0 {
-		return nil, fmt.Errorf("invalid length of the n-gram: %d", n)
+		return nil, fmt.Errorf("invalid n-gram length: %d", n)
 	}
 
 	ngrams := make(NGramSet)
@@ -106,17 +125,7 @@ func NGramLenUnion(ngs1, ngs2 NGramSet) int {
 // sets of strings.  The weights are the map values (the number of instances
 // of the key) and for the union we take the sum of the two values.
 func NGramWeightedLenUnion(ngs1, ngs2 NGramSet) int {
-	unionLen := 0
-
-	for _, v := range ngs1 {
-		unionLen += v
-	}
-
-	for _, v := range ngs2 {
-		unionLen += v
-	}
-
-	return unionLen
+	return ngs1.WeightedLen() + ngs2.WeightedLen()
 }
 
 // NGramIntersection returns a map which contains the intersection of the two

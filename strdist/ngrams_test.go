@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/nickwells/mathutil.mod/v2/mathutil"
-	"github.com/nickwells/strdist.mod/strdist"
+	"github.com/nickwells/strdist.mod/v2/strdist"
 	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 

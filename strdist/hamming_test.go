@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/nickwells/strdist.mod/strdist"
+	"github.com/nickwells/strdist.mod/v2/strdist"
 	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 
@@ -62,11 +62,12 @@ func TestHamming(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		dist := strdist.HammingDistance(tc.a, tc.b)
+		h := strdist.HammingAlgo{}
+		dist := h.Dist(tc.a, tc.b)
 		testhelper.DiffFloat(t,
 			fmt.Sprintf("HammingDistance(%q, %q)", tc.a, tc.b), "distance",
 			dist, tc.expDist, 0)
-		dist = strdist.HammingDistance(tc.b, tc.a)
+		dist = h.Dist(tc.b, tc.a)
 		testhelper.DiffFloat(t,
 			fmt.Sprintf("HammingDistance(%q, %q)", tc.b, tc.a), "distance",
 			dist, tc.expDist, 0)
@@ -76,8 +77,7 @@ func TestHamming(t *testing.T) {
 func TestHammingFinder(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
-		minStrLen           int
-		threshold           float64
+		fc                  strdist.FinderConfig
 		maxResults          int
 		target              string
 		pop                 []string
@@ -86,9 +86,11 @@ func TestHammingFinder(t *testing.T) {
 		expNStringsFlatCase []string
 	}{
 		{
-			ID:         testhelper.MkID("std"),
-			minStrLen:  4,
-			threshold:  2.0,
+			ID: testhelper.MkID("std"),
+			fc: strdist.FinderConfig{
+				Threshold:    2.0,
+				MinStrLength: 4,
+			},
 			maxResults: 0,
 			target:     "hello",
 			pop:        []string{"HELL", "world"},
@@ -98,9 +100,11 @@ func TestHammingFinder(t *testing.T) {
 			expNStringsFlatCase: []string{},
 		},
 		{
-			ID:         testhelper.MkID("short target"),
-			minStrLen:  6,
-			threshold:  2.0,
+			ID: testhelper.MkID("short target"),
+			fc: strdist.FinderConfig{
+				Threshold:    2.0,
+				MinStrLength: 6,
+			},
 			maxResults: 99,
 			target:     "hello",
 			pop:        []string{"HELL", "world"},
@@ -110,9 +114,11 @@ func TestHammingFinder(t *testing.T) {
 			expNStringsFlatCase: []string{},
 		},
 		{
-			ID:         testhelper.MkID("short population entry"),
-			minStrLen:  4,
-			threshold:  2.0,
+			ID: testhelper.MkID("short population entry"),
+			fc: strdist.FinderConfig{
+				Threshold:    2.0,
+				MinStrLength: 4,
+			},
 			maxResults: 1,
 			target:     "hell",
 			pop:        []string{"HELLO", "hellos", "hel", "world"},
@@ -122,9 +128,11 @@ func TestHammingFinder(t *testing.T) {
 			expNStringsFlatCase: []string{"HELLO"},
 		},
 		{
-			ID:         testhelper.MkID("empty target"),
-			minStrLen:  0,
-			threshold:  2.0,
+			ID: testhelper.MkID("empty target"),
+			fc: strdist.FinderConfig{
+				Threshold:    2.0,
+				MinStrLength: 0,
+			},
 			maxResults: 1,
 			target:     "",
 			pop:        []string{"", "HELLO", "hellos", "hel", "world"},
@@ -136,22 +144,23 @@ func TestHammingFinder(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		noChangeFinder, err := strdist.NewHammingFinder(
-			tc.minStrLen, tc.threshold, strdist.NoCaseChange)
+		h := strdist.HammingAlgo{}
+		f, err := strdist.NewFinder(tc.fc, h)
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("Couldn't create the NoCaseChange HammingFinder: %s", err)
 			continue
 		}
-		flatCaseFinder, err := strdist.NewHammingFinder(
-			tc.minStrLen, tc.threshold, strdist.ForceToLower)
+		fc := tc.fc
+		fc.MapToLowerCase = true
+		flatCaseFinder, err := strdist.NewFinder(fc, h)
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("Couldn't create the ForceToLower HammingFinder: %s", err)
 			continue
 		}
 		finderChecker(t, tc.IDStr(), "no case change",
-			tc.target, tc.pop, noChangeFinder, tc.expStringsNoChange)
+			tc.target, tc.pop, f, tc.expStringsNoChange)
 		finderChecker(t, tc.IDStr(), "flattened case",
 			tc.target, tc.pop, flatCaseFinder, tc.expStringsFlatCase)
 		finderCheckerMaxN(t, tc.IDStr(), "flattened case",

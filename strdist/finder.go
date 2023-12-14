@@ -1,133 +1,101 @@
 package strdist
 
 import (
-	"fmt"
 	"sort"
+	"strings"
 )
-
-// CaseMod represents the different behaviours with regards to case
-// handling when measuring distances
-type CaseMod int
-
-const (
-	// NoCaseChange indicates that the case should not be changed
-	NoCaseChange CaseMod = iota
-	// ForceToLower indicates that the case should be forced to lower case
-	// when calculating distances
-	ForceToLower
-)
-
-// DistAlgo describes the algorithm which the Finder will use to calculate
-// distance. There is a Prep func provided which will allow some common tasks
-// to be performed before the distance is calculated - some algorithms can
-// cache some intermediate results to save time when calculating the
-// string-to-string distance.
-type DistAlgo interface {
-	Prep(s string, cm CaseMod)
-	Dist(s1, s2 string, cm CaseMod) float64
-}
-
-// DfltMinStrLen is a suggested minimum length of string to be matched. The
-// problem with trying to find similar strings to very short targets is that
-// they can match with a lot of not obviously similar alternatives. For
-// instance a match for a single character string might be every other single
-// character string in the population. For a number of use cases this is not
-// particularly helpful.
-const DfltMinStrLen = 4
 
 // Finder records the parameters of the finding algorithm
 type Finder struct {
-	// MinStrLen records the minimum length of string to be matched
-	MinStrLen int
-	// T is the threshold for similarity for this finder
-	T float64
-	// CM, if set to ForceToLower, will convert all strings to lower case
-	// before generating the distance
-	CM CaseMod
+	// FinderConfig holds the Finder configuration - various details about the
+	// configuration of the underlying algorithm and constraints on the
+	// behaviour of the Finder itself.
+	FinderConfig
 	// Algo is the algorithm with which to calculate the distance between two
 	// strings
-	Algo DistAlgo
-
-	// pop holds the default population of strings for the Find... methods to
-	// search if no strings are provided.
-	pop []string
+	Algo Algo
 }
 
 // NewFinder checks that the parameters are valid and creates a new
 // Finder if they are. The minLen and threshold limit must each be >=
 // 0. A zero threshold wil require an exact match.
-func NewFinder(minLen int, limit float64, cm CaseMod, a DistAlgo) (*Finder, error) {
-	if minLen < 0 {
-		return nil,
-			fmt.Errorf("bad minimum string length (%d) - it should be >= 0",
-				minLen)
+func NewFinder(fc FinderConfig, algo Algo) (*Finder, error) {
+	if err := fc.Check(); err != nil {
+		return nil, err
 	}
-	if limit < 0.0 {
-		return nil,
-			fmt.Errorf("bad threshold (%f) - it should be >= 0.0", limit)
-	}
-	f := &Finder{
-		MinStrLen: minLen,
-		T:         limit,
-		CM:        cm,
-		Algo:      a,
-	}
-	return f, nil
+	return &Finder{
+		FinderConfig: fc,
+		Algo:         algo,
+	}, nil
 }
 
-// SetPop will set the population of strings to be searched by the
-// Find... methods
-func (f *Finder) SetPop(pop []string) {
-	f.pop = pop
+// NewFinderOrPanic returns a new Finder. It will panic if there is anything
+// wrong with the config.
+func NewFinderOrPanic(fc FinderConfig, algo Algo) *Finder {
+	f, err := NewFinder(fc, algo)
+	if err != nil {
+		panic(err)
+	}
+	return f
+}
+
+// prepStr converts the string according to the FinderConfig
+func (fc FinderConfig) prepStr(s string) string {
+	if fc.MapToLowerCase {
+		s = strings.ToLower(s)
+	}
+
+	if fc.StripRunes != "" {
+		stripped := make([]rune, 0, len(s))
+		for _, r := range s {
+			if strings.ContainsRune(fc.StripRunes, r) {
+				continue
+			}
+			stripped = append(stripped, r)
+		}
+		s = string(stripped)
+	}
+
+	return s
 }
 
 // FindLike returns StrDists for those strings in the population (pop) which
 // are similar to the string (s). A string is similar if it has a common
 // difference calculated from the n-grams which is less than or equal to the
-// NGram finder's threshold value. If the list of strings to search is empty
-// then the default population from the Finder will be used. This should be
-// set in advance using the SetPop method.
+// NGram finder's threshold value.
 func (f *Finder) FindLike(s string, pop ...string) []StrDist {
 	if len(pop) == 0 {
-		pop = f.pop
+		return nil
 	}
-	if len(pop) == 0 || len(s) < f.MinStrLen {
-		return []StrDist{}
+
+	s = f.FinderConfig.prepStr(s)
+	if len(s) < f.FinderConfig.MinStrLength {
+		return nil
 	}
 
 	dists := make([]StrDist, 0, len(pop))
 
-	f.Algo.Prep(s, f.CM)
+	for _, pOrig := range pop {
+		p := f.FinderConfig.prepStr(pOrig)
 
-	for _, p := range pop {
-		if len(p) < f.MinStrLen {
+		if len(p) < f.FinderConfig.MinStrLength {
 			continue
 		}
 
-		d := f.Algo.Dist(s, p, f.CM)
-		if d > f.T {
+		d := f.Algo.Dist(s, p)
+		if d > f.FinderConfig.Threshold {
 			continue
 		}
 
 		dists = append(dists, StrDist{
-			Str:  p,
+			Str:  pOrig,
 			Dist: d,
 		})
 	}
 
-	sort.Slice(dists, func(i, j int) bool {
-		if dists[i].Dist != dists[j].Dist {
-			return dists[i].Dist < dists[j].Dist
-		}
+	lt := lessThanFunc(len(s))
+	sort.Slice(dists, func(i, j int) bool { return lt(dists[i], dists[j]) })
 
-		lenDiffI, lenDiffJ := len(dists[i].Str)-len(s), len(dists[j].Str)-len(s)
-		sqLenDiffI, sqLenDiffJ := lenDiffI*lenDiffI, lenDiffJ*lenDiffJ
-		if sqLenDiffI != sqLenDiffJ {
-			return sqLenDiffI < sqLenDiffJ
-		}
-
-		return dists[i].Str < dists[j].Str
-	})
 	return dists
 }
 

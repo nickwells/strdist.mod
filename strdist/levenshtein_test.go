@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/nickwells/strdist.mod/strdist"
+	"github.com/nickwells/strdist.mod/v2/strdist"
 	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 
@@ -69,8 +69,7 @@ func TestLevenshtein(t *testing.T) {
 func TestLevenshteinFinder(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
-		minStrLen           int
-		threshold           float64
+		fc                  strdist.FinderConfig
 		maxResults          int
 		target              string
 		pop                 []string
@@ -79,9 +78,11 @@ func TestLevenshteinFinder(t *testing.T) {
 		expNStringsFlatCase []string
 	}{
 		{
-			ID:         testhelper.MkID("std"),
-			minStrLen:  4,
-			threshold:  2,
+			ID: testhelper.MkID("std"),
+			fc: strdist.FinderConfig{
+				Threshold:    2,
+				MinStrLength: 4,
+			},
 			maxResults: 0,
 			target:     "hello",
 			pop:        []string{"HELL", "world"},
@@ -91,9 +92,11 @@ func TestLevenshteinFinder(t *testing.T) {
 			expNStringsFlatCase: []string{},
 		},
 		{
-			ID:         testhelper.MkID("short target"),
-			minStrLen:  6,
-			threshold:  2,
+			ID: testhelper.MkID("short target"),
+			fc: strdist.FinderConfig{
+				Threshold:    2,
+				MinStrLength: 6,
+			},
 			maxResults: 99,
 			target:     "hello",
 			pop:        []string{"HELL", "world"},
@@ -103,9 +106,11 @@ func TestLevenshteinFinder(t *testing.T) {
 			expNStringsFlatCase: []string{},
 		},
 		{
-			ID:         testhelper.MkID("short population entry"),
-			minStrLen:  4,
-			threshold:  2,
+			ID: testhelper.MkID("short population entry"),
+			fc: strdist.FinderConfig{
+				Threshold:    2,
+				MinStrLength: 4,
+			},
 			maxResults: 1,
 			target:     "hell",
 			pop:        []string{"HELLO", "hellos", "hel", "world"},
@@ -117,16 +122,17 @@ func TestLevenshteinFinder(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		noChangeFinder, err := strdist.NewLevenshteinFinder(
-			tc.minStrLen, tc.threshold, strdist.NoCaseChange)
+		l := strdist.LevenshteinAlgo{}
+		noChangeFinder, err := strdist.NewFinder(tc.fc, l)
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("Couldn't create the NoCaseChange LevenshteinFinder: %s",
 				err)
 			continue
 		}
-		flatCaseFinder, err := strdist.NewLevenshteinFinder(
-			tc.minStrLen, tc.threshold, strdist.ForceToLower)
+		fc := tc.fc
+		fc.MapToLowerCase = true
+		flatCaseFinder, err := strdist.NewFinder(fc, l)
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("Couldn't create the ForceToLower LevenshteinFinder: %s",

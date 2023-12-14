@@ -1,84 +1,52 @@
 package strdist
 
-import (
-	"fmt"
-	"strings"
-)
-
-// DfltWeightedJaccardThreshold is the threshold for similarity that the
-// pre-built WeightedJaccard Finders will use
-const DfltWeightedJaccardThreshold = 0.33
-
-// DfltWeightedJaccardFinder is a Finder with some default values suitable
-// for a WeightedJaccard algorithm already set.
-var DfltWeightedJaccardFinder *Finder
-
-// CaseBlindWeightedJaccardFinder is a Finder with some default values suitable
-// for a WeightedJaccard algorithm already set. CaseMod is set to ForceToLower.
-var CaseBlindWeightedJaccardFinder *Finder
-
-func init() {
-	var err error
-	DfltWeightedJaccardFinder, err = NewWeightedJaccardFinder(
-		2, DfltMinStrLen, DfltWeightedJaccardThreshold, NoCaseChange)
-	if err != nil {
-		panic("Cannot construct the default WeightedJaccardFinder: " +
-			err.Error())
-	}
-	CaseBlindWeightedJaccardFinder, err = NewWeightedJaccardFinder(
-		2, DfltMinStrLen, DfltWeightedJaccardThreshold, ForceToLower)
-	if err != nil {
-		panic("Cannot construct the case-blind WeightedJaccardFinder: " +
-			err.Error())
-	}
-}
-
 // WeightedJaccardAlgo encapsulates the details needed to provide the
 // WeightedJaccard distance.
 type WeightedJaccardAlgo struct {
-	N         int
-	ngsTarget NGramSet
+	*JaccardAlgo
 }
 
-// NewWeightedJaccardFinder returns a new Finder having a WeightedJaccard
-// algo and an error which will be non-nil if the parameters are invalid. The
-// n-gram length must be > 0; for other invalid parameters see the NewFinder
-// func.
-func NewWeightedJaccardFinder(ngLen, minStrLen int, threshold float64, cm CaseMod,
-) (*Finder, error) {
-	if ngLen <= 0 {
-		return nil,
-			fmt.Errorf("bad N-Gram length (%d) - it should be > 0", ngLen)
-	}
-	algo := &WeightedJaccardAlgo{
-		N: ngLen,
+// NewWeightedJaccardAlgo returns a new WeightedJaccardAlgo with the config
+// and cache size set
+func NewWeightedJaccardAlgo(ngc NGramConfig, maxCacheSize int) (
+	*WeightedJaccardAlgo, error,
+) {
+	ja, err := NewJaccardAlgo(ngc, maxCacheSize)
+	if err != nil {
+		return nil, err
 	}
 
-	return NewFinder(minStrLen, threshold, cm, algo)
+	return &WeightedJaccardAlgo{JaccardAlgo: ja}, nil
 }
 
-// Prep for a WeightedJaccardAlgo will pre-calculate the n-gram set for the
-// target string
-func (a *WeightedJaccardAlgo) Prep(s string, cm CaseMod) {
-	switch cm {
-	case ForceToLower:
-		a.ngsTarget, _ = NGrams(strings.ToLower(s), a.N)
-	default:
-		a.ngsTarget, _ = NGrams(s, a.N)
+// NewWeightedJaccardAlgoOrPanic returns a new WeightedJaccardAlgo. it will
+// panic if the algo cannot be created withour errors.
+func NewWeightedJaccardAlgoOrPanic(ngc NGramConfig, maxCacheSize int,
+) *WeightedJaccardAlgo {
+	a, err := NewWeightedJaccardAlgo(ngc, maxCacheSize)
+	if err != nil {
+		panic(err)
 	}
+	return a
+}
+
+// Name returns the algorithm name
+func (WeightedJaccardAlgo) Name() string {
+	return AlgoNameWeightedJaccard
+}
+
+// Desc returns a string describing the algorithm configuration
+func (a WeightedJaccardAlgo) Desc() string {
+	return a.JaccardAlgo.Desc()
 }
 
 // Dist for a WeightedJaccardAlgo will calculate the distance from the target
 // string
-func (a *WeightedJaccardAlgo) Dist(_, s string, cm CaseMod) float64 {
-	var ngs NGramSet
-	switch cm {
-	case ForceToLower:
-		ngs, _ = NGrams(strings.ToLower(s), a.N)
-	default:
-		ngs, _ = NGrams(s, a.N)
-	}
-	return 1.0 - WeightedJaccardIndex(a.ngsTarget, ngs)
+func (a *WeightedJaccardAlgo) Dist(s1, s2 string) float64 {
+	ngs1 := a.getNGramSet(s1)
+	ngs2 := a.getNGramSet(s2)
+
+	return 1.0 - WeightedJaccardIndex(ngs1, ngs2)
 }
 
 // WeightedJaccardIndex returns the Weighted Jaccard index of the two n-gram
@@ -92,19 +60,4 @@ func WeightedJaccardIndex(ngs1, ngs2 NGramSet) float64 {
 	iLen := NGramWeightedLenIntersection(ngs1, ngs2)
 
 	return float64(iLen) / float64(uLen)
-}
-
-// WeightedJaccardDistance returns the Weighted Jaccard distance of the two
-// strings. This is 1 minus the WeightedJaccardIndex
-func WeightedJaccardDistance(s1, s2 string, n int) (float64, error) {
-	ngs1, err := NGrams(s1, n)
-	if err != nil {
-		return 1.0, err
-	}
-	ngs2, err := NGrams(s2, n)
-	if err != nil {
-		return 1.0, err
-	}
-
-	return 1.0 - WeightedJaccardIndex(ngs1, ngs2), nil
 }

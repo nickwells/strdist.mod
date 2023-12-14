@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/nickwells/strdist.mod/strdist"
+	"github.com/nickwells/strdist.mod/v2/strdist"
 	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 
@@ -16,7 +16,12 @@ func TestStrDistToString(t *testing.T) {
 	}{
 		{
 			ID:     testhelper.MkID("dflt"),
-			expStr: "Str: '', Dist: 0.00000",
+			expStr: `Str: "", Dist: 0.00000`,
+		},
+		{
+			ID:     testhelper.MkID("with vals"),
+			dist:   strdist.StrDist{Str: "Hello", Dist: 1.23456},
+			expStr: `Str: "Hello", Dist: 1.23456`,
 		},
 	}
 

@@ -3,7 +3,7 @@ package strdist_test
 import (
 	"testing"
 
-	"github.com/nickwells/strdist.mod/strdist"
+	"github.com/nickwells/strdist.mod/v2/strdist"
 	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 
@@ -16,10 +16,10 @@ func finderChecker(t *testing.T, tID, subID, target string, pop []string,
 	results := f.FindStrLike(target, pop...)
 	if testhelper.StringSliceDiff(expect, results) {
 		t.Log(tID)
-		t.Logf("\t: comparing: %s", target)
-		t.Logf("\t:   against: %v", pop)
-		t.Logf("\t:  expected: %v", expect)
-		t.Logf("\t:       got: %v", results)
+		t.Logf("\t: comparing: %q", target)
+		t.Logf("\t:   against: %#v", pop)
+		t.Logf("\t:  expected: %#v", expect)
+		t.Logf("\t:       got: %#v", results)
 		t.Errorf("\t: %s : results are unexpected\n", subID)
 	}
 }
@@ -33,10 +33,10 @@ func finderCheckerMaxN(t *testing.T, tID, subID, target string, pop []string,
 	results := f.FindNStrLike(n, target, pop...)
 	if testhelper.StringSliceDiff(expect, results) {
 		t.Log(tID)
-		t.Logf("\t: comparing: %s", target)
-		t.Logf("\t:   against: %v", pop)
-		t.Logf("\t:  expected: %v", expect)
-		t.Logf("\t:       got: %v", results)
+		t.Logf("\t: comparing: %q", target)
+		t.Logf("\t:   against: %#v", pop)
+		t.Logf("\t:  expected: %#v", expect)
+		t.Logf("\t:       got: %#v", results)
 		t.Errorf("\t: %s (max %d values): results are unexpected\n", subID, n)
 	}
 }

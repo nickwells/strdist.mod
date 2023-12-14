@@ -1,102 +1,96 @@
 package strdist
 
 import (
-	"fmt"
 	"math"
-	"strings"
 )
 
-// DfltCosineThreshold is the threshold for similarity that the pre-built
-// Cosine Finders will use
-const DfltCosineThreshold = 0.33
-
-// DfltCosineFinder is a Finder with some default values suitable
-// for a Cosine algorithm already set.
-var DfltCosineFinder *Finder
-
-// CaseBlindCosineFinder is a Finder with some default values suitable
-// for a Cosine algorithm already set. CaseMod is set to ForceToLower.
-var CaseBlindCosineFinder *Finder
-
-func init() {
-	var err error
-	DfltCosineFinder, err = NewCosineFinder(
-		2, DfltMinStrLen, DfltCosineThreshold, NoCaseChange)
-	if err != nil {
-		panic("Cannot construct the default CosineFinder: " + err.Error())
-	}
-	CaseBlindCosineFinder, err = NewCosineFinder(
-		2, DfltMinStrLen, DfltCosineThreshold, ForceToLower)
-	if err != nil {
-		panic("Cannot construct the case-blind CosineFinder: " + err.Error())
-	}
+// cosineStrDetails holds details about a previously scanned string
+type cosineStrDetails struct {
+	ngs    NGramSet
+	strLen float64
 }
 
-// CosineAlgo encapsulates the details needed to provide the cosine distance.
+// CosineAlgo encapsulates the details needed to provide the cosine
+// distance. Note that the cosine distance is not a true distance metric as
+// it does not exhibit the triangle inequality property.
 type CosineAlgo struct {
-	N         int
-	ngsTarget NGramSet
-	lenTarget float64
+	ngc   NGramConfig
+	cache *cache[cosineStrDetails]
 }
 
-// NewCosineFinder returns a new Finder having a cosine algo and an error
-// which will be non-nil if the parameters are invalid. The n-gram length
-// must be > 0; for other invalid parameters see the NewFinder func.
-func NewCosineFinder(ngLen, minStrLen int, threshold float64, cm CaseMod,
-) (*Finder, error) {
-	if ngLen <= 0 {
-		return nil,
-			fmt.Errorf("bad N-Gram length (%d) - it should be > 0", ngLen)
-	}
-	algo := &CosineAlgo{
-		N: ngLen,
+// NewCosineAlgo returns a new CosineAlgo with the config and cache size set
+func NewCosineAlgo(ngc NGramConfig, maxCacheSize int) (*CosineAlgo, error) {
+	if err := ngc.Check(); err != nil {
+		return nil, err
 	}
 
-	return NewFinder(minStrLen, threshold, cm, algo)
+	cache, err := newCache[cosineStrDetails](maxCacheSize)
+	if err != nil {
+		return nil, err
+	}
+
+	return &CosineAlgo{
+		ngc:   ngc,
+		cache: cache,
+	}, nil
 }
 
-// Prep for a CosineAlgo will pre-calculate the n-gram set for the target string
-func (a *CosineAlgo) Prep(s string, cm CaseMod) {
-	switch cm {
-	case ForceToLower:
-		a.ngsTarget, _ = NGrams(strings.ToLower(s), a.N)
-	default:
-		a.ngsTarget, _ = NGrams(s, a.N)
+// NewCosineAlgoOrPanic returns a new CosineAlgo. it will panic if the algo
+// cannot be created withour errors.
+func NewCosineAlgoOrPanic(ngc NGramConfig, maxCacheSize int) *CosineAlgo {
+	a, err := NewCosineAlgo(ngc, maxCacheSize)
+	if err != nil {
+		panic(err)
 	}
-	a.lenTarget = a.ngsTarget.Length()
+	return a
 }
 
 // Dist for a CosineAlgo will calculate the distance from the target string
-func (a *CosineAlgo) Dist(_, s string, cm CaseMod) float64 {
-	var ngs NGramSet
-	switch cm {
-	case ForceToLower:
-		ngs, _ = NGrams(strings.ToLower(s), a.N)
-	default:
-		ngs, _ = NGrams(s, a.N)
-	}
-	return a.ngsTarget.cosineDistance(a.lenTarget, ngs)
+func (a *CosineAlgo) Dist(s1, s2 string) float64 {
+	sd1 := a.getStrDetails(s1)
+	sd2 := a.getStrDetails(s2)
+	return a.cosineDistance(sd1, sd2)
 }
 
-// (ngs NGramSet)cosineDistance works out the cosine distance for a string
-// having already worked out the N-Gram set for the other string and its
-// distance
-func (ngs NGramSet) cosineDistance(len float64, sNgs NGramSet) float64 {
-	len2s := sNgs.lengthSquared()
+// Name returns the algorithm Name
+func (a CosineAlgo) Name() string {
+	return AlgoNameCosine
+}
 
-	if len2s == 0.0 && len == 0.0 {
-		return 0.0
-	}
-	if len2s == 0.0 || len == 0.0 {
-		return 1.0
-	}
+// Desc returns a string describing the algorithm configuration
+func (a CosineAlgo) Desc() string {
+	return a.cache.Desc() + " " + a.ngc.Desc("N-Gram:")
+}
 
-	dot := Dot(ngs, sNgs)
+// getStrDetails returns the strDetails associated with the given string and
+// caaches the results if the cache is of non-zero size.
+func (a *CosineAlgo) getStrDetails(s string) cosineStrDetails {
+	if csd, ok := a.cache.getCachedEntry(s); ok {
+		return csd
+	}
+	var csd cosineStrDetails
+	csd.ngs = a.ngc.NGrams(s)
+	csd.strLen = csd.ngs.Length()
+
+	a.cache.setCachedEntry(s, csd)
+
+	return csd
+}
+
+// cosineDistance returns the cosine distance for the two strings given their
+// NGrams and lengths
+func (a CosineAlgo) cosineDistance(sd1, sd2 cosineStrDetails) float64 {
+	if sd1.strLen == 0 && sd2.strLen == 0 {
+		return 0
+	}
+	if sd1.strLen == 0 || sd2.strLen == 0 {
+		return 1
+	}
+	dot := Dot(sd1.ngs, sd2.ngs)
 	if dot == 0 {
-		return 1.0
+		return 1
 	}
-	lenS := math.Sqrt(len2s)
-	return 1.0 - (float64(dot) / (lenS * len))
+	return 1 - (float64(dot) / (sd1.strLen * sd2.strLen))
 }
 
 // CosineSimilarity returns the cosine similarity between two NGramSets ngs1
@@ -125,19 +119,4 @@ func CosineSimilarity(ngs1, ngs2 NGramSet) float64 {
 	lenS2 := math.Sqrt(len2s2)
 
 	return float64(d) / (lenS1 * lenS2)
-}
-
-// CosineDistance measures the cosine distance between two strings. This is 1
-// minus the cosine similarity
-func CosineDistance(s1, s2 string, n int) (float64, error) {
-	ngs1, err := NGrams(s1, n)
-	if err != nil {
-		return 1.0, err
-	}
-	ngs2, err := NGrams(s2, n)
-	if err != nil {
-		return 1.0, err
-	}
-
-	return 1.0 - CosineSimilarity(ngs1, ngs2), nil
 }

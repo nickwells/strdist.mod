@@ -2,74 +2,29 @@ package strdist
 
 import (
 	"math"
-	"strings"
 	"unicode/utf8"
 
 	"github.com/nickwells/mathutil.mod/v2/mathutil"
 )
 
-// DfltScaledLevFinder is a Finder with some default values suitable
-// for a Scaled Levenshtein algorithm already set.
-var DfltScaledLevFinder *Finder
-
-// CaseBlindScaledLevFinder is a Finder with some default values
-// suitable for a Scaled Levenshtein algorithm already set. CaseMod is set to
-// ForceToLower.
-var CaseBlindScaledLevFinder *Finder
-
-func init() {
-	var err error
-	DfltScaledLevFinder, err = NewScaledLevFinder(
-		DfltMinStrLen, DfltScaledLevThreshold, NoCaseChange)
-	if err != nil {
-		panic("Cannot construct the default ScaledLevFinder: " + err.Error())
-	}
-	CaseBlindScaledLevFinder, err = NewScaledLevFinder(
-		DfltMinStrLen, DfltScaledLevThreshold, ForceToLower)
-	if err != nil {
-		panic("Cannot construct the case-blind ScaledLevFinder: " +
-			err.Error())
-	}
-}
-
-// DfltScaledLevThreshold is a default value for deciding whether a distance
-// between two strings is sufficiently small for them to be considered
-// similar
-const DfltScaledLevThreshold = 0.33
-
 // ScaledLevAlgo encapsulates the details needed to provide the ScaledLev
 // distance.
-type ScaledLevAlgo struct {
-	s string
+type ScaledLevAlgo struct{}
+
+// Name returns the algorithm name
+func (ScaledLevAlgo) Name() string {
+	return AlgoNameScaledLevenshtein
 }
 
-// NewScaledLevFinder returns a new Finder having a ScaledLev algo and an
-// error which will be non-nil if the parameters are invalid - see NewFinder
-// for details.
-func NewScaledLevFinder(minStrLen int, threshold float64, cm CaseMod,
-) (*Finder, error) {
-	return NewFinder(minStrLen, threshold, cm,
-		&ScaledLevAlgo{})
-}
-
-// Prep for a ScaledLevAlgo will pre-calculate the lower-case equivalent for
-// the target string if the caseMod is set to ForceToLower
-func (a *ScaledLevAlgo) Prep(s string, cm CaseMod) {
-	if cm == ForceToLower {
-		a.s = strings.ToLower(s)
-		return
-	}
-	a.s = s
+// Desc returns a string describing the algorithm configuration
+func (ScaledLevAlgo) Desc() string {
+	return ""
 }
 
 // Dist for a ScaledLevAlgo will calculate the ScaledLev distance between
 // the two strings
-func (a *ScaledLevAlgo) Dist(_, s string, cm CaseMod) float64 {
-	if cm == ForceToLower {
-		return ScaledLevDistance(a.s, strings.ToLower(s))
-	}
-
-	return ScaledLevDistance(a.s, s)
+func (ScaledLevAlgo) Dist(s1, s2 string) float64 {
+	return ScaledLevDistance(s1, s2)
 }
 
 // ScaledLevDistance calculates the Scaled Levenshtein distance between
