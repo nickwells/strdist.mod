@@ -60,13 +60,16 @@ func TestNGrams(t *testing.T) {
 			len(m), tc.expDistinctNGrams)
 
 		totNGrams := 0
+
 		for k, v := range m {
 			if len(k) != tc.n {
 				t.Log(id)
-				t.Errorf("\t: some n-grams are not of length %d eg: '%s'",
+				t.Errorf("\t: some n-grams are not of length %d eg: %q",
 					tc.n, k)
+
 				break
 			}
+
 			totNGrams += v
 		}
 

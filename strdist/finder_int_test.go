@@ -68,13 +68,13 @@ func TestConvertStrDist(t *testing.T) {
 		if len(strsShort) > 0 &&
 			strsShort[0] != tc.expFirstVal {
 			t.Log(tc.IDStr())
-			t.Errorf("\t: bad first val (short): should be: '%s', was: '%s'\n",
+			t.Errorf("\t: bad first val (short): should be: %q, was: %q\n",
 				tc.expFirstVal, strsShort[0])
 		}
 		if len(strsShort) > 0 &&
 			strsShort[len(strsShort)-1] != tc.expLastShortVal {
 			t.Log(tc.IDStr())
-			t.Errorf("\t: bad last val (short): should be: '%s', was: '%s'\n",
+			t.Errorf("\t: bad last val (short): should be: %q, was: %q\n",
 				tc.expLastShortVal, strsShort[len(strsShort)-1])
 		}
 	}
@@ -83,9 +83,10 @@ func TestConvertStrDist(t *testing.T) {
 // checkVal reports values that differ from expectation
 func checkVal(t *testing.T, tcID, name, vName string, val, expVal string) {
 	t.Helper()
+
 	if val != expVal {
 		t.Log(tcID)
-		t.Errorf("\t: bad %s val (%s): should be: '%s', was: '%s'\n",
+		t.Errorf("\t: bad %s val (%s): should be: %q, was: %q\n",
 			vName, name, expVal, val)
 	}
 }
