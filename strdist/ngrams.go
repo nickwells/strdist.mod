@@ -35,6 +35,7 @@ func Dot(n1, n2 NGramSet) int64 {
 	for k, v := range n1 {
 		d += int64(v * n2[k])
 	}
+
 	return d
 }
 
@@ -44,6 +45,7 @@ func (ngs NGramSet) lengthSquared() float64 {
 	for _, v := range ngs {
 		l += float64(v * v)
 	}
+
 	return l
 }
 
@@ -69,12 +71,15 @@ func NGrams(s string, n int) (NGramSet, error) {
 	chars := make([]rune, n)
 	for i, r := range s {
 		chars[i%n] = r
+
 		if i >= n-1 {
 			offset := (i + 1) % n
 			str := string(chars[offset:])
+
 			if offset != 0 {
 				str += string(chars[0:offset])
 			}
+
 			ngrams[str]++
 		}
 	}
@@ -140,6 +145,7 @@ func NGramIntersection(ngs1, ngs2 NGramSet) NGramSet {
 			if ngs2v < v {
 				v = ngs2v
 			}
+
 			intersection[k] = v
 		}
 	}
@@ -186,6 +192,7 @@ func NGramWeightedLenIntersection(ngs1, ngs2 NGramSet) int {
 			if omV < v {
 				v = omV
 			}
+
 			intersectionLen += v
 		}
 	}
@@ -217,6 +224,7 @@ func NGramsEqual(ngs1, ngs2 NGramSet) bool {
 		if !ok {
 			return false
 		}
+
 		if ngs1v != ngs2v {
 			return false
 		}
@@ -232,11 +240,13 @@ func OverlapCoefficient(ngs1, ngs2 NGramSet) float64 {
 	if len(ngs2) < minLen {
 		minLen = len(ngs2)
 	}
+
 	if minLen == 0 {
 		return 1.0
 	}
 
 	iLen := NGramLenIntersection(ngs1, ngs2)
+
 	return float64(iLen) / float64(minLen)
 }
 
@@ -257,5 +267,6 @@ func WeightedOverlapCoefficient(ngs1, ngs2 NGramSet) float64 {
 	}
 
 	iLen := NGramWeightedLenIntersection(ngs1, ngs2)
+
 	return float64(iLen) / float64(minLen)
 }

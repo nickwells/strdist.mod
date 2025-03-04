@@ -42,24 +42,30 @@ func (c *cache[T]) clearLeastUsedCacheEntry() {
 	if c.maxCacheSize == 0 { // there is no cache
 		return
 	}
+
 	if len(c.cache) == 0 { // the cache has no entries
 		return
 	}
+
 	if len(c.cache) < c.maxCacheSize { // the cache is not full
 		return
 	}
 
 	var leastUsedEntry string
+
 	leastUsedCount := -1
+
 	for k, ce := range c.cache {
 		if leastUsedCount != -1 {
 			if ce.useCount >= leastUsedCount {
 				continue
 			}
 		}
+
 		leastUsedCount = ce.useCount
 		leastUsedEntry = k
 	}
+
 	delete(c.cache, leastUsedEntry)
 }
 
@@ -83,5 +89,6 @@ func (c *cache[T]) getCachedEntry(key string) (T, bool) {
 		ce.useCount++
 		c.cache[key] = ce
 	}
+
 	return ce.e, ok
 }

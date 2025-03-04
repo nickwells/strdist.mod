@@ -23,6 +23,7 @@ func NewFinder(fc FinderConfig, algo Algo) (*Finder, error) {
 	if err := fc.Check(); err != nil {
 		return nil, err
 	}
+
 	return &Finder{
 		FinderConfig: fc,
 		Algo:         algo,
@@ -36,6 +37,7 @@ func NewFinderOrPanic(fc FinderConfig, algo Algo) *Finder {
 	if err != nil {
 		panic(err)
 	}
+
 	return f
 }
 
@@ -47,12 +49,15 @@ func (fc FinderConfig) prepStr(s string) string {
 
 	if fc.StripRunes != "" {
 		stripped := make([]rune, 0, len(s))
+
 		for _, r := range s {
 			if strings.ContainsRune(fc.StripRunes, r) {
 				continue
 			}
+
 			stripped = append(stripped, r)
 		}
+
 		s = string(stripped)
 	}
 
@@ -94,6 +99,7 @@ func (f *Finder) FindLike(s string, pop ...string) []StrDist {
 	}
 
 	lt := lessThanFunc(len(s))
+
 	sort.Slice(dists, func(i, j int) bool { return lt(dists[i], dists[j]) })
 
 	return dists
@@ -126,11 +132,14 @@ func convertStrDistN(n int, dists []StrDist) []string {
 	if len(dists) < n {
 		n = len(dists)
 	}
+
 	rval := make([]string, 0, n)
+
 	for i, d := range dists {
 		if i >= n {
 			break
 		}
+
 		rval = append(rval, d.Str)
 	}
 

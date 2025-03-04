@@ -77,6 +77,7 @@ func TestNGrams(t *testing.T) {
 		if expTotNGrams < 0 || err != nil {
 			expTotNGrams = 0
 		}
+
 		testhelper.DiffInt(t, id, "total # of n-grams",
 			totNGrams, expTotNGrams)
 	}
@@ -88,6 +89,7 @@ func ExampleNGrams() {
 	if err != nil {
 		fmt.Println("Unexpected error:", err)
 	}
+
 	fmt.Printf(
 		"number of distinct n-grams: %d, number of instances of 'bi': %d\n",
 		len(m), m["bi"])
@@ -170,6 +172,7 @@ func TestNGramUnion(t *testing.T) {
 
 	for _, tc := range testCases {
 		m1, m2 := tc.m1, tc.m2
+
 		for _, order := range []string{"m1/m2", "m2/m1"} {
 			if order == "m2/m1" {
 				m1, m2 = m2, m1
@@ -291,6 +294,7 @@ func TestNGramIntersection(t *testing.T) {
 
 	for _, tc := range testCases {
 		m1, m2 := tc.m1, tc.m2
+
 		for _, order := range []string{"m1/m2", "m2/m1"} {
 			if order == "m2/m1" {
 				m1, m2 = m2, m1
@@ -384,6 +388,7 @@ func TestNGramsEqual(t *testing.T) {
 
 	for _, tc := range testCases {
 		m1, m2 := tc.m1, tc.m2
+
 		for _, order := range []string{"m1/m2", "m2/m1"} {
 			if order == "m2/m1" {
 				m1, m2 = m2, m1
@@ -473,6 +478,7 @@ func TestOverlapCoefficient(t *testing.T) {
 				" within %f of %9.7f but was %9.7f",
 				epsilon, tc.expVal, oc)
 		}
+
 		woc := strdist.WeightedOverlapCoefficient(tc.m1, tc.m2)
 		if !mathutil.AlmostEqual(woc, tc.expWeightedVal, epsilon) {
 			t.Log(tc.IDStr() + " (weighted)")
@@ -518,6 +524,7 @@ func TestNGramDot(t *testing.T) {
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("\t: Couldn't create the ngram set: %s\n", err)
+
 			continue
 		}
 
@@ -525,6 +532,7 @@ func TestNGramDot(t *testing.T) {
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("\t: Couldn't create the ngram set: %s\n", err)
+
 			continue
 		}
 
@@ -561,9 +569,12 @@ func TestNGramLength(t *testing.T) {
 		if err != nil {
 			t.Log("test: " + tc.s)
 			t.Errorf("\t: Couldn't create the ngram set: %s\n", err)
+
 			continue
 		}
+
 		l := ngs.Length()
+
 		const epsilon = 0.001
 		if !mathutil.AlmostEqual(l, tc.expLen, epsilon) {
 			t.Log("test: " + tc.s)

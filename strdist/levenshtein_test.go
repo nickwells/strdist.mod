@@ -123,20 +123,25 @@ func TestLevenshteinFinder(t *testing.T) {
 
 	for _, tc := range testCases {
 		l := strdist.LevenshteinAlgo{}
+
 		noChangeFinder, err := strdist.NewFinder(tc.fc, l)
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("Couldn't create the NoCaseChange LevenshteinFinder: %s",
 				err)
+
 			continue
 		}
+
 		fc := tc.fc
 		fc.MapToLowerCase = true
+
 		flatCaseFinder, err := strdist.NewFinder(fc, l)
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("Couldn't create the ForceToLower LevenshteinFinder: %s",
 				err)
+
 			continue
 		}
 

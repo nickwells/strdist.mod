@@ -43,6 +43,7 @@ func TestNewCosineAlgo(t *testing.T) {
 			if a == nil {
 				t.Log(tc.IDStr())
 				t.Errorf("\t: a nil pointer was returned but no error\n")
+
 				continue
 			}
 
@@ -88,14 +89,17 @@ func TestNewCosineFinder(t *testing.T) {
 			t.Log(tc.IDStr())
 			t.Errorf("\t: an unexpected error making the cosine algo: %s\n",
 				err)
+
 			continue
 		}
+
 		f, err := strdist.NewFinder(tc.fc, a)
 		if testhelper.CheckExpErr(t, err, tc) &&
 			err == nil {
 			if f == nil {
 				t.Log(tc.IDStr())
 				t.Errorf("\t: a nil pointer was returned but no error\n")
+
 				continue
 			}
 		}
@@ -295,23 +299,28 @@ func TestCosineFinder(t *testing.T) {
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("\t: Couldn't create the Cosine Algo: %s", err)
+
 			continue
 		}
 
 		fc := tc.fc
 		fc.MapToLowerCase = true
+
 		f2lower, err := strdist.NewFinder(fc, a)
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("\t: Couldn't create the map2Lower CosineFinder: %s", err)
+
 			continue
 		}
 
 		fc = tc.fc
+
 		f, err := strdist.NewFinder(fc, a)
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("\t: Couldn't create the CosineFinder: %s", err)
+
 			continue
 		}
 

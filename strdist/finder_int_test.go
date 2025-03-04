@@ -55,22 +55,26 @@ func TestConvertStrDist(t *testing.T) {
 		strsShort := convertStrDistN(tc.n, tc.dists)
 		testhelper.DiffInt(t, tc.IDStr(), "all", len(strsAll), tc.expLen)
 		testhelper.DiffInt(t, tc.IDStr(), "short", len(strsShort), tc.expShortLen)
+
 		if len(strsAll) > 0 {
 			checkVal(t, tc.IDStr(), "all", "first", strsAll[0], tc.expFirstVal)
 			checkVal(t, tc.IDStr(), "all", "last",
 				strsAll[len(strsAll)-1], tc.expLastVal)
 		}
+
 		if len(strsShort) > 0 {
 			checkVal(t, tc.IDStr(), "short", "first", strsShort[0], tc.expFirstVal)
 			checkVal(t, tc.IDStr(), "short", "last",
 				strsShort[len(strsShort)-1], tc.expLastShortVal)
 		}
+
 		if len(strsShort) > 0 &&
 			strsShort[0] != tc.expFirstVal {
 			t.Log(tc.IDStr())
 			t.Errorf("\t: bad first val (short): should be: %q, was: %q\n",
 				tc.expFirstVal, strsShort[0])
 		}
+
 		if len(strsShort) > 0 &&
 			strsShort[len(strsShort)-1] != tc.expLastShortVal {
 			t.Log(tc.IDStr())

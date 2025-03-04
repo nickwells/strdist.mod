@@ -51,6 +51,7 @@ func TestJaccard(t *testing.T) {
 			t.Log(tc.IDStr())
 			t.Errorf("\t: Couldn't create the JaccardAlgo: %s", err)
 		}
+
 		d := j.Dist(tc.s1, tc.s2)
 		testhelper.DiffFloat(t, tc.IDStr(), "Jaccard distance",
 			d, 1.0-tc.expVal, epsilon)
@@ -60,7 +61,9 @@ func TestJaccard(t *testing.T) {
 			t.Log(tc.IDStr())
 			t.Errorf("\t: Couldn't create the WeightedJaccardAlgo: %s", err)
 		}
+
 		d = wj.Dist(tc.s1, tc.s2)
+
 		testhelper.DiffFloat(t, tc.IDStr(), "Weighted Jaccard distance",
 			d, 1.0-tc.expWeightedVal, epsilon)
 	}
@@ -143,6 +146,7 @@ func TestJaccardFinder(t *testing.T) {
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("Couldn't create the Jaccard Algo: %s", err)
+
 			continue
 		}
 
@@ -150,15 +154,18 @@ func TestJaccardFinder(t *testing.T) {
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("Couldn't create the standard JaccardFinder: %s", err)
+
 			continue
 		}
 
 		fc := tc.fc
 		fc.MapToLowerCase = true
+
 		flatCaseFinder, err := strdist.NewFinder(fc, ja)
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("Couldn't create the ForceToLower JaccardFinder: %s", err)
+
 			continue
 		}
 

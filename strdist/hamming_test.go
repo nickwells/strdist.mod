@@ -67,6 +67,7 @@ func TestHamming(t *testing.T) {
 		testhelper.DiffFloat(t,
 			fmt.Sprintf("HammingDistance(%q, %q)", tc.a, tc.b), "distance",
 			dist, tc.expDist, 0)
+
 		dist = h.Dist(tc.b, tc.a)
 		testhelper.DiffFloat(t,
 			fmt.Sprintf("HammingDistance(%q, %q)", tc.b, tc.a), "distance",
@@ -145,20 +146,26 @@ func TestHammingFinder(t *testing.T) {
 
 	for _, tc := range testCases {
 		h := strdist.HammingAlgo{}
+
 		f, err := strdist.NewFinder(tc.fc, h)
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("Couldn't create the NoCaseChange HammingFinder: %s", err)
+
 			continue
 		}
+
 		fc := tc.fc
 		fc.MapToLowerCase = true
+
 		flatCaseFinder, err := strdist.NewFinder(fc, h)
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("Couldn't create the ForceToLower HammingFinder: %s", err)
+
 			continue
 		}
+
 		finderChecker(t, tc.IDStr(), "no case change",
 			tc.target, tc.pop, f, tc.expStringsNoChange)
 		finderChecker(t, tc.IDStr(), "flattened case",

@@ -13,6 +13,7 @@ func finderChecker(t *testing.T, tID, subID, target string, pop []string,
 	f *strdist.Finder, expect []string,
 ) {
 	t.Helper()
+
 	results := f.FindStrLike(target, pop...)
 	if testhelper.StringSliceDiff(expect, results) {
 		t.Log(tID)
@@ -30,6 +31,7 @@ func finderCheckerMaxN(t *testing.T, tID, subID, target string, pop []string,
 	n int, f *strdist.Finder, expect []string,
 ) {
 	t.Helper()
+
 	results := f.FindNStrLike(n, target, pop...)
 	if testhelper.StringSliceDiff(expect, results) {
 		t.Log(tID)

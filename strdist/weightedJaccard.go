@@ -27,6 +27,7 @@ func NewWeightedJaccardAlgoOrPanic(ngc NGramConfig, maxCacheSize int,
 	if err != nil {
 		panic(err)
 	}
+
 	return a
 }
 

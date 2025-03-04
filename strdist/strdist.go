@@ -24,6 +24,7 @@ func (sd SDSlice) Cmp(i, j int) bool {
 	if sd[i].Dist == sd[j].Dist {
 		return sd[i].Str < sd[j].Str
 	}
+
 	return sd[i].Dist < sd[j].Dist
 }
 
@@ -38,6 +39,7 @@ func lessThanFunc(strLen int) func(sd1, sd2 StrDist) bool {
 		// then compare by closeness in length to the target string
 		lenDiff1, lenDiff2 := len(sd1.Str)-strLen, len(sd2.Str)-strLen
 		sqLenDiff1, sqLenDiff2 := lenDiff1*lenDiff1, lenDiff2*lenDiff2
+
 		if sqLenDiff1 != sqLenDiff2 {
 			return sqLenDiff1 < sqLenDiff2
 		}

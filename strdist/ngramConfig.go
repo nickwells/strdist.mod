@@ -24,10 +24,15 @@ type NGramConfig struct {
 	OverFlowTheSource bool
 }
 
+const (
+	DfltNGramLength    = 3
+	DfltNGramMinLength = 2
+)
+
 // DfltNGramConfig is a suggested value for the NGram config
 var DfltNGramConfig = NGramConfig{
-	Length:            3,
-	MinLength:         2,
+	Length:            DfltNGramLength,
+	MinLength:         DfltNGramMinLength,
 	OverFlowTheSource: true,
 }
 
@@ -36,15 +41,18 @@ func (ngc NGramConfig) Check() error {
 	if ngc.Length <= 0 {
 		return fmt.Errorf("the N-Gram Length (%d) must be > 0", ngc.Length)
 	}
+
 	if ngc.MinLength < 0 {
 		return fmt.Errorf("the N-Gram MinLength (%d) must be >= 0",
 			ngc.MinLength)
 	}
+
 	if ngc.MinLength > ngc.Length {
 		return fmt.Errorf(
 			"the N-Gram MinLength (%d) must be <= the Length (%d)",
 			ngc.MinLength, ngc.Length)
 	}
+
 	return nil
 }
 
@@ -53,6 +61,7 @@ func (ngc NGramConfig) String() string {
 	s := fmt.Sprintf("MinLength: %2d", ngc.MinLength)
 	s += fmt.Sprintf(", Length: %2d", ngc.Length)
 	s += fmt.Sprintf(", Overflow: %-5.5v", ngc.OverFlowTheSource)
+
 	return s
 }
 
@@ -61,6 +70,7 @@ func (ngc NGramConfig) Desc(prefix string) string {
 	s := fmt.Sprintf("%s Min: %2d", prefix, ngc.MinLength)
 	s += fmt.Sprintf(" Len: %2d", ngc.Length)
 	s += fmt.Sprintf(" O'flow: %5t", ngc.OverFlowTheSource)
+
 	return s
 }
 
@@ -74,9 +84,11 @@ func (ngc NGramConfig) calcStartIdx(endIdx, maxIdx, length int) (int, bool) {
 			if !ngc.OverFlowTheSource {
 				return startIdx, false
 			}
+
 			startIdx = maxIdx
 		}
 	}
+
 	return startIdx, true
 }
 
@@ -85,6 +97,7 @@ func (ngc NGramConfig) overflowStrings(idx, maxIdx int, ngStrings *[]string) {
 	if idx != maxIdx {
 		return
 	}
+
 	if !ngc.OverFlowTheSource {
 		return
 	}
@@ -109,12 +122,14 @@ func (ngc NGramConfig) subGrams(idx, maxIdx int, ss []rune) []string {
 
 	maxSSIdx := min(idx, ngc.Length-1)
 	minLength := ngc.MinLength
+
 	if minLength == 0 {
 		minLength = ngc.Length
 	}
 
 	for l := minLength; l <= ngc.Length; l++ {
 		endIdx := idx % ngc.Length
+
 		startIdx, ok := ngc.calcStartIdx(endIdx, maxSSIdx, l)
 		if !ok {
 			break
@@ -148,9 +163,11 @@ func (ngc NGramConfig) NGrams(s string) NGramSet {
 
 	subStr := make([]rune, ngc.Length)
 	maxIdx := len(s) - 1
+
 	for i, r := range s {
 		subStr[i%ngc.Length] = r
 		strs := ngc.subGrams(i, maxIdx, subStr)
+
 		for _, str := range strs {
 			ngs[str]++
 		}

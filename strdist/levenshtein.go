@@ -32,6 +32,7 @@ func LevenshteinDistance(a, b string) int {
 	aLen := utf8.RuneCountInString(a)
 	bLen := utf8.RuneCountInString(b)
 	d := make([][]int, aLen+1)
+
 	for i := range d {
 		d[i] = make([]int, bLen+1)
 		d[i][0] = i

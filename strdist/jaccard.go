@@ -30,6 +30,7 @@ func NewJaccardAlgoOrPanic(ngc NGramConfig, maxCacheSize int) *JaccardAlgo {
 	if err != nil {
 		panic(err)
 	}
+
 	return a
 }
 

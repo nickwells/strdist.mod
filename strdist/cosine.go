@@ -42,6 +42,7 @@ func NewCosineAlgoOrPanic(ngc NGramConfig, maxCacheSize int) *CosineAlgo {
 	if err != nil {
 		panic(err)
 	}
+
 	return a
 }
 
@@ -49,6 +50,7 @@ func NewCosineAlgoOrPanic(ngc NGramConfig, maxCacheSize int) *CosineAlgo {
 func (a *CosineAlgo) Dist(s1, s2 string) float64 {
 	sd1 := a.getStrDetails(s1)
 	sd2 := a.getStrDetails(s2)
+
 	return a.cosineDistance(sd1, sd2)
 }
 
@@ -68,6 +70,7 @@ func (a *CosineAlgo) getStrDetails(s string) cosineStrDetails {
 	if csd, ok := a.cache.getCachedEntry(s); ok {
 		return csd
 	}
+
 	var csd cosineStrDetails
 	csd.ngs = a.ngc.NGrams(s)
 	csd.strLen = csd.ngs.Length()
@@ -83,13 +86,17 @@ func (a CosineAlgo) cosineDistance(sd1, sd2 cosineStrDetails) float64 {
 	if sd1.strLen == 0 && sd2.strLen == 0 {
 		return 0
 	}
+
 	if sd1.strLen == 0 || sd2.strLen == 0 {
 		return 1
 	}
+
 	dot := Dot(sd1.ngs, sd2.ngs)
+
 	if dot == 0 {
 		return 1
 	}
+
 	return 1 - (float64(dot) / (sd1.strLen * sd2.strLen))
 }
 
@@ -106,6 +113,7 @@ func CosineSimilarity(ngs1, ngs2 NGramSet) float64 {
 	if len2s1 == 0.0 && len2s2 == 0.0 {
 		return 1.0
 	}
+
 	if len2s1 == 0.0 || len2s2 == 0.0 {
 		return 0.0
 	}
