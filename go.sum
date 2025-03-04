@@ -1,6 +1,6 @@
-github.com/nickwells/mathutil.mod/v2 v2.3.0 h1:DwjCd05iqtXo62s0w20fOKRIfrzpa32LxXJF3hQ7fuM=
-github.com/nickwells/mathutil.mod/v2 v2.3.0/go.mod h1:iMemGHs0c19VuPxoe2lu86p06BXBJAPGpUFQ2QABHDM=
-github.com/nickwells/testhelper.mod/v2 v2.3.0 h1:b/EpnHiYr8dnr6C0a6zW2KAyHgfQ72pVw3cNklSzwxs=
-github.com/nickwells/testhelper.mod/v2 v2.3.0/go.mod h1:pdhf+XHRINEUH6a0OcwC98ETD3ZluAXKA5xOhC2I2Qk=
-golang.org/x/exp v0.0.0-20230905200255-921286631fa9 h1:GoHiUyI/Tp2nVkLI2mCxVkOjsbSXD66ic0XW0js0R9g=
-golang.org/x/exp v0.0.0-20230905200255-921286631fa9/go.mod h1:S2oDrQGGwySpoQPVqRShND87VCbxmc6bL1Yd2oYrm6k=
+github.com/nickwells/mathutil.mod/v2 v2.5.0 h1:11axdspXsBwUdedLZwW0Wb7aOldcHqxHAIQlem0CHvs=
+github.com/nickwells/mathutil.mod/v2 v2.5.0/go.mod h1:qhDRs8OS05VNhQonSbuSFS/Y4a0l+UvX80A65SlN9Hc=
+github.com/nickwells/testhelper.mod/v2 v2.3.1 h1:+MoIM5+l+rS6koT4YWxhD6mA9sdzYT5DgYrf/4d/j/s=
+github.com/nickwells/testhelper.mod/v2 v2.3.1/go.mod h1:sqfsJGl4kHsjaFeHMnitr54GVR5GWX6RN693zSPonOg=
+golang.org/x/exp v0.0.0-20250228200357-dead58393ab7 h1:aWwlzYV971S4BXRS9AmqwDLAD85ouC6X+pocatKY58c=
+golang.org/x/exp v0.0.0-20250228200357-dead58393ab7/go.mod h1:BHOTPb3L19zxehTsLoJXVaTktb06DFgmdW6Wb9s8jqk=
