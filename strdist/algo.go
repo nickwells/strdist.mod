@@ -49,6 +49,7 @@ var DefaultThresholds = map[string]float64{
 	AlgoNameWeightedJaccard:   DfltThresholdWeightedJaccard,
 }
 
+// DefaultFinders associates the Finders with the algorithm name
 var DefaultFinders = map[string]*Finder{
 	AlgoNameLevenshtein: NewFinderOrPanic(
 		FinderConfig{

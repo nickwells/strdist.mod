@@ -17,10 +17,10 @@ func (HammingAlgo) Desc() string {
 	return ""
 }
 
-// HammingDistance returns the Hamming distance of the two strings. if the
-// two strings are of different length then the Hamming distance is increased
-// by the difference in lengths. Note that it compares runes rather than
-// characters or chars
+// Dist returns the Hamming distance of the two strings. if the two strings
+// are of different length then the Hamming distance is increased by the
+// difference in lengths. Note that it compares runes rather than characters
+// or chars
 func (HammingAlgo) Dist(s1, s2 string) float64 {
 	d := utf8.RuneCountInString(s2) - utf8.RuneCountInString(s1)
 	if d < 0 {

@@ -24,6 +24,7 @@ type NGramConfig struct {
 	OverFlowTheSource bool
 }
 
+// These constants are the defaults for the length of an NGram
 const (
 	DfltNGramLength    = 3
 	DfltNGramMinLength = 2
@@ -65,7 +66,7 @@ func (ngc NGramConfig) String() string {
 	return s
 }
 
-// String returns a string describing the NGramConfig
+// Desc returns a string describing the NGramConfig
 func (ngc NGramConfig) Desc(prefix string) string {
 	s := fmt.Sprintf("%s Min: %2d", prefix, ngc.MinLength)
 	s += fmt.Sprintf(" Len: %2d", ngc.Length)

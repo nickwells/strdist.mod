@@ -2,6 +2,7 @@ package strdist
 
 import "fmt"
 
+// DfltMaxCacheSize is the default for the max cache size
 const DfltMaxCacheSize = 3
 
 // cacheEntry holds the details of a cache entry.

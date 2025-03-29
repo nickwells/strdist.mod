@@ -2,6 +2,7 @@ package strdist
 
 import "fmt"
 
+// DfltMinStrLength is the default value for the minimum string length
 const DfltMinStrLength = 3
 
 // FinderConfig contains details needed to configure an algorithm and to
