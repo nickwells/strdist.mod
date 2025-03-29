@@ -73,22 +73,22 @@ func (f *Finder) FindLike(s string, pop ...string) []StrDist {
 		return nil
 	}
 
-	s = f.FinderConfig.prepStr(s)
-	if len(s) < f.FinderConfig.MinStrLength {
+	s = f.prepStr(s)
+	if len(s) < f.MinStrLength {
 		return nil
 	}
 
 	dists := make([]StrDist, 0, len(pop))
 
 	for _, pOrig := range pop {
-		p := f.FinderConfig.prepStr(pOrig)
+		p := f.prepStr(pOrig)
 
-		if len(p) < f.FinderConfig.MinStrLength {
+		if len(p) < f.MinStrLength {
 			continue
 		}
 
 		d := f.Algo.Dist(s, p)
-		if d > f.FinderConfig.Threshold {
+		if d > f.Threshold {
 			continue
 		}
 
