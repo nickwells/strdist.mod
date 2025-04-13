@@ -2,6 +2,7 @@ package strdist
 
 import (
 	"fmt"
+	"maps"
 	"math"
 )
 
@@ -92,9 +93,7 @@ func NGrams(s string, n int) (NGramSet, error) {
 func NGramUnion(ngs1, ngs2 NGramSet) NGramSet {
 	union := make(NGramSet)
 
-	for k, v := range ngs1 {
-		union[k] = v
-	}
+	maps.Copy(union, ngs1)
 
 	for k, v := range ngs2 {
 		union[k] += v
@@ -141,12 +140,7 @@ func NGramIntersection(ngs1, ngs2 NGramSet) NGramSet {
 	for k, ngs1v := range ngs1 {
 		ngs2v, ok := ngs2[k]
 		if ok {
-			v := ngs1v
-			if ngs2v < v {
-				v = ngs2v
-			}
-
-			intersection[k] = v
+			intersection[k] = min(ngs2v, ngs1v)
 		}
 	}
 
@@ -188,12 +182,7 @@ func NGramWeightedLenIntersection(ngs1, ngs2 NGramSet) int {
 	for k, rmV := range rangeMap {
 		omV, ok := otherMap[k]
 		if ok {
-			v := rmV
-			if omV < v {
-				v = omV
-			}
-
-			intersectionLen += v
+			intersectionLen += min(omV, rmV)
 		}
 	}
 
@@ -236,10 +225,7 @@ func NGramsEqual(ngs1, ngs2 NGramSet) bool {
 // OverlapCoefficient constructs the overlap coefficient (sometimes known as the
 // Szymkiewicz-Simpson coefficient) of the two n-gram sets
 func OverlapCoefficient(ngs1, ngs2 NGramSet) float64 {
-	minLen := len(ngs1)
-	if len(ngs2) < minLen {
-		minLen = len(ngs2)
-	}
+	minLen := min(len(ngs2), len(ngs1))
 
 	if minLen == 0 {
 		return 1.0
@@ -254,13 +240,7 @@ func OverlapCoefficient(ngs1, ngs2 NGramSet) float64 {
 // (sometimes known as the Szymkiewicz-Simpson coefficient) of the two n-gram
 // sets
 func WeightedOverlapCoefficient(ngs1, ngs2 NGramSet) float64 {
-	lenNGS1 := ngs1.WeightedLen()
-	lenNGS2 := ngs2.WeightedLen()
-	minLen := lenNGS1
-
-	if lenNGS2 < minLen {
-		minLen = lenNGS2
-	}
+	minLen := min(ngs1.WeightedLen(), ngs2.WeightedLen())
 
 	if minLen == 0 {
 		return 1.0
