@@ -9,7 +9,7 @@ const DfltMinStrLength = 3
 // constrain the subsequent Finder.
 type FinderConfig struct {
 	// Threshold limits the distance that a string must have for the Finder
-	// to recognize it as a match. The distance must be <= the threshold
+	// to recognise it as a match. The distance must be <= the threshold
 	Threshold float64
 	// MinStrLength is the shortest string that will be compared against
 	// other strings. The problem with trying to find similar strings to very
