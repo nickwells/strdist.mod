@@ -168,12 +168,13 @@ func TestCosine(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		a, err := strdist.NewCosineAlgo(tc.ngc, 0)
+		const epsilon = 0.00001
 
+		a, err := strdist.NewCosineAlgo(tc.ngc, 0)
 		if testhelper.CheckExpErr(t, err, tc) && err == nil {
 			dist := a.Dist(tc.s1, tc.s2)
 			testhelper.DiffFloat(t, tc.IDStr(), "distance",
-				dist, tc.expDist, 0.00001)
+				dist, tc.expDist, epsilon)
 		}
 	}
 }

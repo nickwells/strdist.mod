@@ -72,6 +72,7 @@ func (a *CosineAlgo) getStrDetails(s string) cosineStrDetails {
 	}
 
 	var csd cosineStrDetails
+
 	csd.ngs = a.ngc.NGrams(s)
 	csd.strLen = csd.ngs.Length()
 
