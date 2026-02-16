@@ -1,3 +1,5 @@
+github.com/nickwells/english.mod v1.2.7 h1:wooWFTe74SWb1hzTyHjmHuHkehJKwYt17pZvuJueRII=
+github.com/nickwells/english.mod v1.2.7/go.mod h1:t2rzy1Anjz7JVefigm+V0mSw0nQRDkl630FgV/BTILQ=
 github.com/nickwells/mathutil.mod/v2 v2.5.8 h1:XwJJAykrxl8mBex7I+58qz2IWvo1U1EMwtLrmk69bfs=
 github.com/nickwells/mathutil.mod/v2 v2.5.8/go.mod h1:XV4nz8Gl6GDDY+yoXj4svWT2Cw0pnop9cAwjSGiS3R0=
 github.com/nickwells/testhelper.mod/v2 v2.4.3 h1:qMMfxdVNdx2+lrAVeL2H2hZtPSBZNiJIs8PO819xHxA=
