@@ -2,8 +2,6 @@ package strdist
 
 import (
 	"unicode/utf8"
-
-	"github.com/nickwells/mathutil.mod/v2/mathutil"
 )
 
 // LevenshteinAlgo encapsulates the details needed to provide the Levenshtein
@@ -53,7 +51,7 @@ func LevenshteinDistance(a, b string) int {
 			ins := d[i+1][j] + 1
 			sub := d[i][j] + subsCost
 
-			d[i+1][j+1] = mathutil.MinOfInt(del, ins, sub)
+			d[i+1][j+1] = min(del, ins, sub)
 		}
 	}
 

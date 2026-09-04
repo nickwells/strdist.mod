@@ -3,8 +3,6 @@ package strdist
 import (
 	"math"
 	"unicode/utf8"
-
-	"github.com/nickwells/mathutil.mod/v2/mathutil"
 )
 
 // ScaledLevAlgo encapsulates the details needed to provide the ScaledLev
@@ -60,7 +58,7 @@ func ScaledLevDistance(a, b string) float64 {
 			ins := d[i+1][j] + 1
 			sub := d[i][j] + subsCost
 
-			d[i+1][j+1] = mathutil.MinOfInt(del, ins, sub)
+			d[i+1][j+1] = min(del, ins, sub)
 		}
 	}
 
